@@ -25,10 +25,19 @@ export async function createDrop(
   const signer = await provider.getSigner()
 	const ipfs = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(ipfsHash))
 	const proxyContract = await new ethers.Contract(REACT_APP_FACTORY_ADDRESS, RetroDropContract, signer)
+	console.log(
+		REACT_APP_TEMPLATE_ADDRESS,
+		tokenAddress,
+		merkleTree.merkleRoot,
+		Number(new Date()) / 1000,
+		ipfs,
+		ipfs
+	)
   const result = await proxyContract.createDrop(
 		REACT_APP_TEMPLATE_ADDRESS,
 		tokenAddress,
 		merkleTree.merkleRoot,
+		Math.round(Number(new Date()) / 1000),
 		ipfs,
 		ipfs
 	)
