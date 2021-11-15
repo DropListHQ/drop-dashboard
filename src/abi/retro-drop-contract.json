@@ -42,6 +42,11 @@
 				"type": "bytes32"
 			},
 			{
+				"internalType": "uint256",
+				"name": "expiryTimestamp",
+				"type": "uint256"
+			},
+			{
 				"internalType": "bytes32",
 				"name": "salt",
 				"type": "bytes32"

@@ -43,7 +43,7 @@ const mapStateToProps = ({
 
 const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions>) => {
   return {
-      createIPFS: (data: any, title: string, description: string, logoURL: string, tokenAddress: string) => newRetroDropAsyncActions.createIPFS(dispatch, data, title, description, logoURL, tokenAddress),
+      createIPFS: (data: any, title: string, description: string, logoURL: string, tokenAddress: string, chainId: number) => newRetroDropAsyncActions.createIPFS(dispatch, data, title, description, logoURL, tokenAddress, chainId),
       createDrop: (
         provider: any,
         merkleTree: TMerkleTree,
@@ -225,8 +225,8 @@ const RetroactiveDropsCreate: FC<ReduxType> = ({
                 appearance={loading ? 'gradient' : undefined}
                 disabled={!dropTitle || !tokenAddress}
                 onClick={() => {
-                  if (!tokenAddress) { return }
-                  createIPFS(merkleTree, dropTitle, dropDescription, dropLogoURL, tokenAddress)
+                  if (!tokenAddress || !chainId) { return }
+                  createIPFS(merkleTree, dropTitle, dropDescription, dropLogoURL, tokenAddress, chainId)
                 }}
               />
             </WidgetControls>
