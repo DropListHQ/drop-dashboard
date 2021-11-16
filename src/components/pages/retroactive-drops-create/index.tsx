@@ -302,12 +302,12 @@ const RetroactiveDropsCreate: FC<ReduxType> = ({
             />
             <DataBlock
               title='Your retrodrop contract'
-              text={dropContractAddress}
+              text={dropAddress || ''}
             />
             <WidgetDataSplit>
               <WidgetDataBlock
                 title='Total NFTs dropped'
-                text='10,000'
+                text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
               />
               <WidgetDataBlock
                 title='Recipients'

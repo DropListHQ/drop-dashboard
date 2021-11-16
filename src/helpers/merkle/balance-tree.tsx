@@ -36,7 +36,7 @@ export default class BalanceTree {
   ): Buffer {
     console.log({ index, account, amount, tokenId })
     return Buffer.from(
-      utils.solidityKeccak256(['uint256', 'address', 'uint256', 'uint256'], [index, account, amount, tokenId]).substr(2),
+      utils.solidityKeccak256(['uint256', 'uint256', 'address', 'uint256'], [index, tokenId, account, amount]).substr(2),
       'hex'
     )
   }
