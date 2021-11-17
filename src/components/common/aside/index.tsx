@@ -25,7 +25,7 @@ const AsideComponent: FC<AsideProps> = () => {
 				<AsideLogoIcon>
 					<Icons.LinkdropLogo />
 				</AsideLogoIcon>
-				<Icons.LinkdropTextLogo />
+				{false && <Icons.LinkdropTextLogo />}
 			</AsideLogoZone>
 
 			<AsideMenu>
