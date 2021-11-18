@@ -5,6 +5,9 @@ import { useHistory } from 'react-router-dom'
 import { RootState } from 'data/store';
 import { connect } from 'react-redux';
 import { Container } from './styled-components'
+import { copyToClipboard } from 'helpers'
+
+const { REACT_APP_CLAIM_URL } = process.env
 
 const mapStateToProps = ({
   drops: { retroDrops },
@@ -29,9 +32,13 @@ const RetroactiveDrops: FC<ReduxType> = ({ retroDrops, address }) => {
           chainId={item.chainId}
           description={item.description}
           subtitle='ERC1155'
-          buttonTitle='Open'
+          buttonTitle='Open claim page'
+          secondaryButtonTitle='Copy claim url'
           action={() => {
-            window.open(`https://gateway.pinata.cloud/ipfs/${item.ipfsHash}`, '_blank')
+            window.open(`${REACT_APP_CLAIM_URL}/${item.ipfsHash}`, '_blank')
+          }}
+          secondaryAction={() => {
+            copyToClipboard({ value: `${REACT_APP_CLAIM_URL}/${item.ipfsHash}` })
           }}
         />
       })}

@@ -25,7 +25,7 @@ export const Button = styled.button.attrs(props => ({
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  transition: color .3s, background-color .3s;
+  transition: color .3s, background-color .3s, transform .3s;
   border: 2px solid ${props => props.theme.buttonDefaultColor};
 
   ${props => props.size && props.size === 'small' && css`
@@ -50,7 +50,7 @@ export const Button = styled.button.attrs(props => ({
     background: ${props => props.theme.buttonGradient};
     background-size: 200%;
     background-position: left top;
-    transition: background-position .3s;
+    transition: background-position .3s, transform .3s;
     border: none;
     color: ${props => props.theme.secondaryTextColor};
   `}
@@ -61,6 +61,7 @@ export const Button = styled.button.attrs(props => ({
     }
     &:active {
       background-position: center center;
+      transform: scale(1.01);
     }
   `}
 
@@ -72,6 +73,7 @@ export const Button = styled.button.attrs(props => ({
     &:active {
       border-color: ${props.theme.buttonActiveColor};
       background-color: ${props.theme.buttonActiveColor};
+      transform: scale(1.01);
     }
   `}
 
@@ -83,6 +85,7 @@ export const Button = styled.button.attrs(props => ({
     &:active {
       border-color: ${props.theme.buttonActiveColor};
       color: ${props.theme.buttonActiveColor};
+      transform: scale(1.01);
     }
   `}
 

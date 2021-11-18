@@ -4,6 +4,7 @@ import capitalize from './capitalize'
 import parseRecipientsData from './parse-recipients-data'
 import parseBalanceMap from './merkle/parse-balance-map'
 import defineJSONRpcUrl from './define-json-rpc-url'
+import copyToClipboard from './copy-to-clipboard'
 
 export {
   shortenString,
@@ -11,5 +12,6 @@ export {
   capitalize,
   parseRecipientsData,
   parseBalanceMap,
-  defineJSONRpcUrl
+  defineJSONRpcUrl,
+  copyToClipboard
 }

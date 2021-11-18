@@ -4,13 +4,14 @@ import {
     Campaign,
     CampaignSubtitle,
     CampaignTitle,
-    CampaignDescription
+    CampaignDescription,
+    Buttons,
+    ButtonComponent
 } from './styled-components'
-
-import Button from '../button'
 
 import { ThemeProvider } from 'styled-components'
 import themes from 'themes'
+
 
 interface Props {
     title: string,
@@ -21,7 +22,9 @@ interface Props {
     description?: string,
     total?: number,
     claimed?: number,
-    action: () => void
+    action: () => void,
+    secondaryAction?: () => void,
+    secondaryButtonTitle?: string
 }
 
 const CampaignComponent: FC<Props> = ({
@@ -30,13 +33,15 @@ const CampaignComponent: FC<Props> = ({
   chainId = 1,
   buttonTitle = 'Create',
   action = () => console.log('hello world!'),
+  secondaryAction,
   subtitle,
   description,
   total,
-  claimed = ''
+  claimed = '',
+  secondaryButtonTitle
 }) => {
 
-    const button = <Button
+    const button = <ButtonComponent
       title={buttonTitle}
       size='small'
       onClick={action}
@@ -50,6 +55,21 @@ const CampaignComponent: FC<Props> = ({
             <CampaignTitle>{title}</CampaignTitle>
             {description && <CampaignDescription>{description}</CampaignDescription>}
             {button}
+          </>
+        case 'current':
+          return <>
+            {subtitle && <CampaignSubtitle>{subtitle}</CampaignSubtitle>}
+            <CampaignTitle>{title}</CampaignTitle>
+            {description && <CampaignDescription>{description}</CampaignDescription>}
+            <Buttons>
+              {secondaryAction && secondaryButtonTitle && <ButtonComponent
+                title={secondaryButtonTitle}
+                size='small'
+                appearance='inverted'
+                onClick={secondaryAction}
+              />}
+              {button}
+            </Buttons>
           </>
         default:
           return <>

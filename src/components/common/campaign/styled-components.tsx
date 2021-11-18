@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-    
+import Button from '../button'
+
 const Campaign = styled.div`
   max-width: 300px;
   width: 100%;
@@ -33,6 +34,14 @@ const CampaignDescription = styled.p`
   color: ${props => props.theme.primaryTextColor}
 `
 
+const Buttons = styled.div`
+  display: flex;
+`
+
+const ButtonComponent = styled(Button)`
+  margin-right: 10px;
+` 
+
 export {
-  Campaign, CampaignTitle, CampaignSubtitle, CampaignDescription
+  Campaign, CampaignTitle, CampaignSubtitle, CampaignDescription, Buttons, ButtonComponent
 }
