@@ -183,6 +183,7 @@ const RetroactiveDropsCreate: FC<ReduxType> = ({
               disabled={!recipientsValue}
               onClick={() => {
                 const recipientsData = parseRecipientsData(recipientsValue)
+                console.log({ recipientsData })
                 if (!recipientsData) {
                   return 
                 }

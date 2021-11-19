@@ -26,7 +26,8 @@ interface MerkleDistributorInfo {
 type OldFormat = {
   [account: string]: {
     amount: number | string,
-    tokenId: number | string
+    tokenId: number | string,
+    maxSupply: number
   }
 }
 type NewFormat = {
@@ -34,6 +35,7 @@ type NewFormat = {
   earnings: string;
   reasons: string;
   tokenId: number | string;
+  maxSupply: string
 }
 
 export default function parseBalanceMap(balances: OldFormat | NewFormat[]): MerkleDistributorInfo {
@@ -45,7 +47,8 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
           address: account,
           earnings: `0x${balances[account].amount.toString(16)}`,
           reasons: '',
-          tokenId: balances[account].tokenId
+          tokenId: balances[account].tokenId,
+          maxSupply: `0x${balances[account].maxSupply.toString(16)}`
         })
       )
 
@@ -53,6 +56,7 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
     [address: string]: {
       amount: BigNumber;
       tokenId: number | string,
+      maxSupply: BigNumber,
       flags?: {
         [flag: string]: boolean
       }
@@ -61,7 +65,8 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
     address: account,
     earnings,
     reasons,
-    tokenId
+    tokenId,
+    maxSupply
   }) => {
     if (!isAddress(account)) {
       throw new Error(`Found invalid address: ${account}`)
@@ -69,6 +74,7 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
     const parsed = getAddress(account)
     if (memo[parsed]) throw new Error(`Duplicate address: ${parsed}`)
     const parsedNum = BigNumber.from(earnings)
+    const parsedMaxSupply = BigNumber.from(maxSupply)
     if (parsedNum.lte(0)) throw new Error(`Invalid amount for account: ${account}`)
 
     const flags = {
@@ -79,6 +85,7 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
 
     memo[parsed] = {
       amount: parsedNum,
+      maxSupply: parsedMaxSupply,
       tokenId,
       ...(reasons === '' ? {} : { flags })
     }
@@ -86,7 +93,6 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
   }, {})
 
   const sortedAddresses = Object.keys(dataByAddress).sort()
-  
 
   // construct a tree
   const tree = new BalanceTree(
@@ -95,6 +101,7 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
         account: address,
         amount: dataByAddress[address].amount,
         tokenId: dataByAddress[address].tokenId,
+        maxSupply: dataByAddress[address].maxSupply
       }
     })
   )
@@ -105,21 +112,24 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
       index: number;
       proof: string[];
       tokenId: number | string,
+      maxSupply: string | number,
       flags?: {
         [flag: string]: boolean
       }
     }
   }>((memo, address, index) => {
-    const { amount, flags, tokenId } = dataByAddress[address]
+    const { amount, flags, tokenId, maxSupply } = dataByAddress[address]
     memo[address] = {
       index,
       amount: amount.toHexString(),
       tokenId,
+      maxSupply: maxSupply.toHexString(),
       proof: tree.getProof(
         index,
         address,
         amount,
-        tokenId
+        tokenId,
+        maxSupply
       ),
       ...(flags ? { flags } : {}),
     }
