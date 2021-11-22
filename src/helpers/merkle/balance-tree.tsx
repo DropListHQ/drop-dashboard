@@ -3,10 +3,10 @@ import { BigNumber, utils } from 'ethers'
 
 export default class BalanceTree {
   private readonly tree: MerkleTree
-  constructor(balances: { account: string; amount: BigNumber, tokenId: string | number }[]) {
+  constructor(balances: { account: string; amount: BigNumber, tokenId: string | number, maxSupply: BigNumber }[]) {
     this.tree = new MerkleTree(
-      balances.map(({ account, amount, tokenId }, index) => {
-        return BalanceTree.toNode(index, account, amount, tokenId)
+      balances.map(({ account, amount, tokenId, maxSupply }, index) => {
+        return BalanceTree.toNode(index, account, amount, tokenId, maxSupply)
       })
     )
   }
@@ -17,9 +17,10 @@ export default class BalanceTree {
     amount: BigNumber,
     tokenId: number | string,
     proof: Buffer[],
-    root: Buffer
+    root: Buffer,
+    maxSupply: BigNumber
   ): boolean {
-    let pair = BalanceTree.toNode(index, account, amount, tokenId)
+    let pair = BalanceTree.toNode(index, account, amount, tokenId, maxSupply)
     for (const item of proof) {
       pair = MerkleTree.combinedHash(pair, item)
     }
@@ -32,11 +33,11 @@ export default class BalanceTree {
     index: number | BigNumber,
     account: string,
     amount: BigNumber,
-    tokenId: number | string
+    tokenId: number | string,
+    maxSupply: BigNumber
   ): Buffer {
-    console.log({ index, account, amount, tokenId })
     return Buffer.from(
-      utils.solidityKeccak256(['uint256', 'uint256', 'address', 'uint256'], [index, tokenId, account, amount]).substr(2),
+      utils.solidityKeccak256(['uint256', 'uint256', 'address', 'uint256', 'uint256'], [index, tokenId, account, amount, maxSupply]).substr(2),
       'hex'
     )
   }
@@ -50,8 +51,9 @@ export default class BalanceTree {
     index: number | BigNumber,
     account: string,
     amount: BigNumber,
-    tokenId: number | string
+    tokenId: number | string,
+    maxSupply: BigNumber
   ): string[] {
-    return this.tree.getHexProof(BalanceTree.toNode(index, account, amount, tokenId))
+    return this.tree.getHexProof(BalanceTree.toNode(index, account, amount, tokenId, maxSupply))
   }
 }
