@@ -3,7 +3,8 @@ type TRetroDrop = {
   ipfsHash: string,
   address: string,
   chainId: number,
-  description: string
+  description: string,
+  logoURL: string
 }
 
 export default TRetroDrop

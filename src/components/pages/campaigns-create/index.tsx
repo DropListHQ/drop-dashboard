@@ -1,4 +1,4 @@
-import React, { useState, FC } from 'react'
+import React, { useState, FC, useEffect } from 'react'
 import {
   Widget,
   DataBlock
@@ -14,7 +14,7 @@ import {
   WidgetDataBlock
 } from './styled-compoents'
 
-import { TMerkleTree, TRetroDropStep } from 'types'
+import { TMerkleTree, TRetroDropStep, TRetroDropType } from 'types'
 import { RootState } from 'data/store';
 import * as newRetroDropAsyncActions from 'data/store/reducers/new-retro-drop/async-actions'
 import * as newRetroDropActions from 'data/store/reducers/new-retro-drop/actions'
@@ -23,11 +23,12 @@ import { ContractActions } from 'data/store/reducers/contract/types'
 import { NewRetroDropActions } from 'data/store/reducers/new-retro-drop/types'
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import CampaignType from './campaign-type'
 
 const mapStateToProps = ({
   user: { address, provider, chainId },
   contract: { loading: contractLoading },
-  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree, dropAddress },
+  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree, dropAddress, type },
 }: RootState) => ({
   loading,
   address,
@@ -38,7 +39,8 @@ const mapStateToProps = ({
   tokenAddress,
   merkleTree,
   chainId,
-  dropAddress
+  dropAddress,
+  type
 })
 
 const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions>) => {
@@ -60,6 +62,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
         address: string,
         chainId: number,
         description: string,
+        dropLogoURL: string,
         callback: () => void
       ) => newContractAsyncActions.approve(
         dispatch,
@@ -72,24 +75,28 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
         address,
         chainId,
         description,
+        dropLogoURL,
         callback
       ),
       setStep: (step: TRetroDropStep) => dispatch(newRetroDropActions.setStep(step)),
+      setType: (type: TRetroDropType) => dispatch(newRetroDropActions.setType(type)),
       setTokenAddress: (tokenAddress: string) => dispatch(newRetroDropActions.setTokenAddress(tokenAddress)),
       setMerkleTree: (merkleTree: any) => dispatch(newRetroDropActions.setMerkleTree(merkleTree)),
   }
 }
 
 type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps>
-
+type onTypeChoose = (type: TRetroDropType) => void
 const defineTitie = (step: TRetroDropStep): number => {
   switch(step) {
-    case 'initialize':
+    case 'choose_type':
       return 1
-    case 'create_tree':
+    case 'initialize':
       return 2
-    case 'publish_ipfs':
+    case 'create_tree':
       return 3
+    case 'publish_ipfs':
+      return 4
     case 'deploy_contract':
       return 4
     case 'give_approval':
@@ -113,6 +120,9 @@ const RetroactiveDropsCreate: FC<ReduxType> = ({
   setStep,
   step,
 
+  setType,
+  type,
+
   setTokenAddress,
   tokenAddress,
 
@@ -135,11 +145,23 @@ const RetroactiveDropsCreate: FC<ReduxType> = ({
   const [ dropDescription, setDropDescription ] = useState('Test')
   const getTitle = (step: TRetroDropStep) => `Step ${defineTitie(step)}/5`
 
-  const cancel = () => setStep('initialize')
+  const cancel = () => setStep('choose_type')
   const history = useHistory()
+  const onTypeChoose:onTypeChoose = type => {
+    setType(type)
+    setStep('initialize')
+  }
+
+  useEffect(() => {
+    cancel()
+    return () => { cancel() }
+  }, [])
+
 
   const renderWidget = (step: TRetroDropStep) => {
     switch(step) {
+      case 'choose_type':
+        return <CampaignType onTypeChoose={onTypeChoose} />
       case 'initialize':
         return <Widget title={getTitle(step)} subtitle='Specify the token to be airdropped'>
           <WidgetInput
@@ -338,8 +360,9 @@ const RetroactiveDropsCreate: FC<ReduxType> = ({
                     address,
                     chainId,
                     dropDescription,
+                    dropLogoURL,
                     () => {
-                      history.push('/retroactive-drops')
+                      history.push('/')
                     }
                   )
                 }}

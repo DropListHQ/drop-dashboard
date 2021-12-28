@@ -18,13 +18,15 @@ export const Button = styled.button.attrs(props => ({
 }))<ButtonProps>`
   background-color: ${props => props.theme.buttonDefaultColor};
   color: ${props => props.theme.secondaryTextColor};
-  font-size: 16px;
+  font-size: 12px;
   cursor: pointer;
-  padding: 8px 16px;
+  padding: 8px 12px;
+  line-height: 1;
   display: flex;
   align-items: center;
+  font-weight: 700;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 20px;
   transition: color .3s, background-color .3s, transform .3s;
   border: 2px solid ${props => props.theme.buttonDefaultColor};
 
@@ -32,6 +34,7 @@ export const Button = styled.button.attrs(props => ({
     font-size: 12px;
     padding: 4px 8px;
     border-width: 1px;
+    border-radius: 8px;
   `}
 
   ${props => props.appearance === 'inverted' && css`

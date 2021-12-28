@@ -6,10 +6,10 @@ import Web3Modal from "web3modal";
 import { Web3Provider } from '@ethersproject/providers'
 
 import {
-  Main,
+  NotFound,
   Page,
-  RetroactiveDrops,
-  RetroactiveDropsCreate
+  Campaigns,
+  CampaignsCreate
 //   NotFound,
 //   ProtectedRoute,
 //   Authorize
@@ -65,13 +65,13 @@ const AppRouter: FC<ReduxType> = ({ setAddress, setProvider, setChainId, provide
   return <HashRouter>
     <Page>
       <Switch>
-        <Route path='/retroactive-drops/create' render={props => <RetroactiveDropsCreate
+        <Route path='/campaigns/new' exact={true} render={props => <CampaignsCreate
           {...props}
         />} />
-        <Route path='/retroactive-drops' render={props => <RetroactiveDrops
+        <Route path='/' exact={true} render={props => <Campaigns
           {...props}
         />} />
-        <Route path='*' render={props => <Main
+        <Route path='*' exact={true} render={props => <NotFound
           {...props}
         />} />
       </Switch>

@@ -1,6 +1,6 @@
 import { ActionType } from 'typesafe-actions';
 import * as actions from './actions'
-import { TRetroDropStep } from 'types'
+import { TRetroDropStep, TRetroDropType } from 'types'
 
 export interface NewRetroDropState {
   step: TRetroDropStep,
@@ -11,7 +11,8 @@ export interface NewRetroDropState {
   dropAddress?: string | null,
   merkleTree: any,
   loading: boolean,
-  ipfs: string | null
+  ipfs: string | null,
+  type: null | TRetroDropType
 }
 
 export type NewRetroDropActions = ActionType<typeof actions>;

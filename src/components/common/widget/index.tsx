@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { WidgetComponent, WidgetTitle, WidgetSubtitle } from './styled-components'
+import { WidgetComponent } from './styled-components'
 
 interface Props {
   title: string,
@@ -8,8 +8,6 @@ interface Props {
 
 const Widget: FC<Props> = ({ children, title, subtitle }) => {
   return <WidgetComponent>
-    <WidgetTitle>{title}</WidgetTitle>
-    {subtitle && <WidgetSubtitle>{subtitle}</WidgetSubtitle>}
     {children}
   </WidgetComponent>
 }

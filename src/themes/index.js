@@ -12,7 +12,7 @@ const themes = {
 		blankColor: '#FFF', // secondary coplor of bg
 		menuItemActive: '#3E4049',
 		primaryHighlightColor: '#2B32EA',
-
+		invertedCommunityColor: '#4B2FF5',
 		buttonDefaultColor: '#2B32EA',
 		buttonDisabledColor: '#DFE0EB',
 		buttonHoverColor: '#4047EC',
@@ -23,6 +23,10 @@ const themes = {
 		tagDefaultColor: '#DFE0EB',
 		tagErrorColor: '#FF2C2C',
 		tagInfoColor: '#2B32EA',
+		tagSuccessColor: '#21F142',
+
+		statusSuccessColor: '#19E46A',
+		statusStoppedColor: '#DFE0EB'
 	},
 	dark: {
 		primaryTextColor: 'red',

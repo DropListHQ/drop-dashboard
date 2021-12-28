@@ -1,5 +1,6 @@
 import { ReactComponent as EthereumLogo } from './ethereum-logo.svg';
 import { ReactComponent as LinkdropLogo } from './linkdrop-logo.svg';
+import { ReactComponent as LinkdropWhiteLogo } from './linkdrop-white-logo.svg';
 import { ReactComponent as LinkdropTextLogo } from './linkdrop-text-logo.svg';
 import { ReactComponent as DashboardMenuIcon } from './dashboard-menu-icon.svg';
 import { ReactComponent as SupportMenuIcon } from './support-menu-icon.svg';
@@ -15,7 +16,8 @@ const Icons = {
     SupportMenuIcon,
     FaqMenuIcon,
     DocsMenuIcon,
-    StarMenuIcon
+    StarMenuIcon,
+    LinkdropWhiteLogo
 }
 
 export default Icons

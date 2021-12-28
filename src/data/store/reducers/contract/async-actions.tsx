@@ -68,6 +68,7 @@ export async function approve(
 	address: string,
 	chainId: number,
 	description: string,
+	logoURL: string,
 	callback: () => void
 ) {
   dispatch(actionsContract.setLoading(true))
@@ -88,7 +89,7 @@ export async function approve(
 	const approved = await checkReceipt()
 	if (approved) {
 		alert(`DONE: ${ipfsHash}`)
-		dispatch(actionsDrops.addNewRetroDrop({ title, ipfsHash , address, chainId, description }))
+		dispatch(actionsDrops.addNewRetroDrop({ title, ipfsHash , address, chainId, description, logoURL }))
 		if (callback) { callback() }
 	}
 	

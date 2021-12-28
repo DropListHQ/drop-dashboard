@@ -7,8 +7,7 @@ import {
 	AsideMenu,
 	AsideMenuItem,
 	AsideLogoIcon,
-	AsideMenuItemIconClassName,
-	AsideLink
+	AsideMenuItemIconClassName
 	// @ts-ignore
 } from './styled-components.tsx'
 
