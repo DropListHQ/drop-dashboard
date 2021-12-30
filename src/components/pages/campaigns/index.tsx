@@ -5,10 +5,14 @@ import { Campaigns } from './styled-components'
 import { RootState } from 'data/store';
 import { connect } from 'react-redux';
 import { Container, Text } from './styled-components'
-import { copyToClipboard } from 'helpers'
+
 import Icons from 'icons';
 import { useHistory } from 'react-router-dom'
-const { REACT_APP_CLAIM_URL } = process.env
+
+
+type TProps = {
+  connectWallet: () => void
+}
 
 const mapStateToProps = ({
   drops: { retroDrops },
@@ -20,7 +24,7 @@ const mapStateToProps = ({
 
 type ReduxType = ReturnType<typeof mapStateToProps>
 
-const RetroactiveDrops: FC<ReduxType> = ({ retroDrops, address }) => {
+const RetroactiveDrops: FC<ReduxType & TProps> = ({ retroDrops, address, connectWallet }) => {
   const currentCampaigns = retroDrops.filter(item => item.address === address)
   const history = useHistory()
   return <div>
@@ -33,7 +37,7 @@ const RetroactiveDrops: FC<ReduxType> = ({ retroDrops, address }) => {
             status='active'
             image={item.logoURL}
             id={item.ipfsHash}
-            link=''
+            key={item.ipfsHash}
           />
         })}
       </Campaigns>
@@ -45,9 +49,9 @@ const RetroactiveDrops: FC<ReduxType> = ({ retroDrops, address }) => {
         title='Custom community'
         description='Provide addresses via .csv file'
         inverted
-        buttonTitle='Connect wallet and start'
+        buttonTitle={!address ? 'Connect wallet and start' : 'Start'}
         action={() => {
-          history.push('/campaigns/new')
+          address ? history.push('/campaigns/new') : connectWallet()
         }}
         icon={<Icons.LinkdropWhiteLogo />}
       />

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { NavLink } from 'react-router-dom'
 
 export const Header = styled.div`
@@ -61,6 +61,10 @@ export const HeaderUseInfo = styled.div`
   justify-content: center;
   margin-right: 16px;
   border: 1px solid ${props => props.theme.primaryBorderColor};
+
+  ${props => props.onClick && css`
+    cursor: pointer;
+  `}
 `
 export const HeaderMenu = styled.div`
   display: flex;
