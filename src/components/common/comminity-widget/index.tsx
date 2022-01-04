@@ -1,5 +1,4 @@
-import React, { FC } from 'react'
-import cn from 'classnames'
+import React, { FC, useEffect } from 'react'
 import {
   Widget,
   WidgetImage,
@@ -7,6 +6,7 @@ import {
   WidgetText,
   WidgetButton,
   WidgetIcon,
+  WidgetIconBlank,
   buttonClass
 } from './styled-components'
 
@@ -18,13 +18,28 @@ type TCommunityWidget = {
   image?: string,
   icon?: React.ReactNode,
   buttonTitle: string,
-  inverted?: boolean
+  inverted?: boolean,
+  actionOnLoad?: () => void
 }
-const CommunityWidget: FC<TCommunityWidget> = ({ title, description, action, buttonTitle, inverted, image, icon }) => {
+const CommunityWidget: FC<TCommunityWidget> = ({ title, description, action, buttonTitle, inverted, image, icon, actionOnLoad }) => {
+  useEffect(() => {
+    actionOnLoad && actionOnLoad()
+  }, [])
+
+  const defineIcon = (icon?: React.ReactNode, image?: string, title?: string) => {
+    if (icon) { return <WidgetIcon>{icon}</WidgetIcon>}
+    if (image && title) {
+      return <WidgetImage src={image} alt={title} />
+    }
+    if (title) {
+      return <WidgetIcon>
+        <WidgetIconBlank />
+      </WidgetIcon>
+    }
+  }
+ 
   return <Widget inverted={inverted}>
-    {icon ? <WidgetIcon>
-      {icon}
-    </WidgetIcon> : <WidgetImage src={image} alt={title} />}
+    {defineIcon(icon, image, title)}
     <WidgetTitle>{title}</WidgetTitle>
     <WidgetText>{description}</WidgetText>
     <WidgetButton className={buttonClass} onClick={action}>{buttonTitle}</WidgetButton>

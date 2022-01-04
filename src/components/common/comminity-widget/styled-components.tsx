@@ -11,8 +11,10 @@ export const Widget = styled.div<TWidget>`
   display: flex;
   flex-direction: column;
   text-align: center;
-  padding: 50px 34px 36px;
+  padding: 50px 28px;
   align-items: center;
+  border: 1px solid ${props => props.theme.primaryBorderColor};
+  background: ${props => props.theme.blankColor};
   color: ${props => props.theme.primaryTextColor};
   .${buttonClass} {
     color: ${props => props.theme.primaryTextColor};
@@ -39,6 +41,7 @@ export const WidgetIcon = styled.div`
   height: 60px;
   margin-bottom: 20px;
   border-radius: 100%;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,4 +74,10 @@ export const WidgetButton = styled.button`
   padding: 0 10px;
   border-radius: 20px;
   background-color: transparent;
+`
+
+export const WidgetIconBlank = styled.div`
+  width: 100%;
+  height: 100%;
+  background: pink;
 `

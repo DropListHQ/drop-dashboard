@@ -1,4 +1,4 @@
-import React, { useState, FC, useEffect } from 'react'
+import { useState, FC, useEffect } from 'react'
 import {
   Widget,
   DataBlock

@@ -3,6 +3,7 @@ import { Route, Switch, HashRouter, Redirect, useLocation } from 'react-router-d
 // import { functionalActions } from 'decorators'
 import ProtectedRoute from './protected-route'
 
+
 import {
   NotFound,
   Page,
@@ -27,6 +28,9 @@ const mapStateToProps = ({ user: { provider, address } }: RootState) => ({ provi
 type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps>
 
 const AppRouter: FC<ReduxType> = ({ address, connectWallet }) => {
+  useEffect(() => {
+
+  }, [])
   return <HashRouter>
     <Page>
       <Switch>

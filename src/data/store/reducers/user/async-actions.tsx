@@ -19,15 +19,30 @@ export async function connectWallet (dispatch: Dispatch<UserActions>) {
   /* See Provider Options Section */
   };
   const web3Modal = new Web3Modal({
-  cacheProvider: true, // optional
-  providerOptions // required
+    cacheProvider: true, // optional
+    providerOptions // required
   })
   const provider = await web3Modal.connect();
   const providerWeb3 = new Web3Provider(provider)
   
   const { chainId } = await providerWeb3.getNetwork()
+  
   const accounts = await providerWeb3.listAccounts()
+  const address = accounts[0] && accounts[0].toLowerCase()
   dispatch(actions.setProvider(providerWeb3))
-  dispatch(actions.setAddress(accounts[0]))
+  dispatch(actions.setAddress(address))
   dispatch(actions.setChainId(chainId))
+
+  provider.on("accountsChanged", (accounts: string[]) => {
+    const address = accounts[0] && accounts[0].toLowerCase()
+    dispatch(actions.setAddress(address))
+  });
+  
+  // Subscribe to chainId change
+  provider.on("chainChanged", (chainId: string) => {
+    const chainIdConverted = parseInt(chainId, 16);
+    dispatch(actions.setChainId(chainIdConverted))
+  });
+  
+
 }
