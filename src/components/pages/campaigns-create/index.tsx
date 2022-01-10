@@ -14,7 +14,7 @@ import {
   WidgetDataBlock
 } from './styled-compoents'
 
-import { TMerkleTree, TRetroDropStep, TRetroDropType } from 'types'
+import { TMerkleTree, TRetroDropStep, TRetroDropType, TRecipientsData } from 'types'
 import { RootState } from 'data/store';
 import * as newRetroDropAsyncActions from 'data/store/reducers/new-retro-drop/async-actions'
 import * as newRetroDropActions from 'data/store/reducers/new-retro-drop/actions'
@@ -43,6 +43,8 @@ const mapStateToProps = ({
   type
 })
 
+
+
 const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions>) => {
   return {
       createIPFS: (data: any, title: string, description: string, logoURL: string, tokenAddress: string, chainId: number) => newRetroDropAsyncActions.createIPFS(dispatch, data, title, description, logoURL, tokenAddress, chainId),
@@ -63,6 +65,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
         chainId: number,
         description: string,
         dropLogoURL: string,
+        recipientsData: TRecipientsData,
         callback: () => void
       ) => newContractAsyncActions.approve(
         dispatch,
@@ -76,6 +79,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
         chainId,
         description,
         dropLogoURL,
+        recipientsData,
         callback
       ),
       setStep: (step: TRetroDropStep) => dispatch(newRetroDropActions.setStep(step)),
@@ -106,7 +110,7 @@ const defineTitie = (step: TRetroDropStep): number => {
   }
 }
 
-const RetroactiveDropsCreate: FC<ReduxType> = ({
+const CampaignsCreate: FC<ReduxType> = ({
   address,
   provider,
   loading,
@@ -137,9 +141,7 @@ const RetroactiveDropsCreate: FC<ReduxType> = ({
   const [ currentTokenAddress, setCurrentTokenAddress ] = useState('0x35573543F290fef43d62Ad3269BB9a733445ddab')
   const [ dropContractAddress, setDropContractAddress ] = useState('0xaff4481d10270f50f203e0763e2597776068cbc5')
   const [ recipientsValue, setRecipientsValue ] = useState('0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 4, 1')
-  const [ recipients, setRecipients ] = useState<{
-    [recipient: string]: { amount: number | string, tokenId: string | number }
-  } | null>({})
+  const [ recipients, setRecipients ] = useState<TRecipientsData>({})
   const [ dropTitle, setDropTitle ] = useState('Test Drop')
   const [ dropLogoURL, setDropLogoURL ] = useState('https://eattherich.shop')
   const [ dropDescription, setDropDescription ] = useState('Test')
@@ -361,6 +363,7 @@ const RetroactiveDropsCreate: FC<ReduxType> = ({
                     chainId,
                     dropDescription,
                     dropLogoURL,
+                    recipients,
                     () => {
                       history.push('/')
                     }
@@ -380,4 +383,4 @@ const RetroactiveDropsCreate: FC<ReduxType> = ({
   </div>
 }
 
-export default connect(mapStateToProps, mapDispatcherToProps)(RetroactiveDropsCreate)
+export default connect(mapStateToProps, mapDispatcherToProps)(CampaignsCreate)

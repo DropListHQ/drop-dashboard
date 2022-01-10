@@ -7,17 +7,19 @@ import { ReactComponent as SupportMenuIcon } from './support-menu-icon.svg';
 import { ReactComponent as FaqMenuIcon } from './faq-menu-icon.svg';
 import { ReactComponent as DocsMenuIcon } from './docs-menu-icon.svg';
 import { ReactComponent as StarMenuIcon } from './star-menu-icon.svg';
+import { ReactComponent as GoBackIcon } from './go-back-icon.svg';
 
 const Icons = {
-    EthereumLogo,
-    LinkdropLogo,
-    LinkdropTextLogo,
-    DashboardMenuIcon,
-    SupportMenuIcon,
-    FaqMenuIcon,
-    DocsMenuIcon,
-    StarMenuIcon,
-    LinkdropWhiteLogo
+  EthereumLogo,
+  LinkdropLogo,
+  LinkdropTextLogo,
+  DashboardMenuIcon,
+  SupportMenuIcon,
+  FaqMenuIcon,
+  DocsMenuIcon,
+  StarMenuIcon,
+  LinkdropWhiteLogo,
+  GoBackIcon
 }
 
 export default Icons

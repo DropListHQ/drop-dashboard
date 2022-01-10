@@ -3,14 +3,7 @@ import { Constants } from './constants';
 
 const initialState: CommunitiesState = {
   loading: false,
-  communities: [
-    {
-      id: '0x4ab6d8ff68330d844a3056ea2f8179a7e19759ff',
-      name: null,
-      numOwners: null,
-      numTokens: null
-    }
-  ]
+  communities: []
 };
 
 export function communitiesReducer(

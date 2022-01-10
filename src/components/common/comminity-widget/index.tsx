@@ -19,13 +19,9 @@ type TCommunityWidget = {
   icon?: React.ReactNode,
   buttonTitle: string,
   inverted?: boolean,
-  actionOnLoad?: () => void
+  disabled?: boolean
 }
-const CommunityWidget: FC<TCommunityWidget> = ({ title, description, action, buttonTitle, inverted, image, icon, actionOnLoad }) => {
-  useEffect(() => {
-    actionOnLoad && actionOnLoad()
-  }, [])
-
+const CommunityWidget: FC<TCommunityWidget> = ({ title, description, disabled, action, buttonTitle, inverted, image, icon }) => {
   const defineIcon = (icon?: React.ReactNode, image?: string, title?: string) => {
     if (icon) { return <WidgetIcon>{icon}</WidgetIcon>}
     if (image && title) {
@@ -42,7 +38,7 @@ const CommunityWidget: FC<TCommunityWidget> = ({ title, description, action, but
     {defineIcon(icon, image, title)}
     <WidgetTitle>{title}</WidgetTitle>
     <WidgetText>{description}</WidgetText>
-    <WidgetButton className={buttonClass} onClick={action}>{buttonTitle}</WidgetButton>
+    <WidgetButton disabled={disabled} className={buttonClass} onClick={action}>{buttonTitle}</WidgetButton>
   </Widget>
 }
 

@@ -14,6 +14,7 @@ import DataBlock from './data-block'
 import Loader from './loader'
 import Title from './title'
 import Campaign from './campaign'
+import Breadcrumbs from './breadcrumbs'
 
 export {
   Header,
@@ -31,5 +32,6 @@ export {
   Title,
   CommunityWidget,
   Footer,
-  Campaign
+  Campaign,
+  Breadcrumbs
 }

@@ -4,11 +4,11 @@ const instance = axios.create({
   baseURL: 'https://api.studio.thegraph.com/query/9597/dropowners1/0.0.22'
 });
 
-const getCommunityData = async (contract: string) => {
+const getCommunityData = async (contract: string[]) => {
   const response = await instance.post('/', {
-    query: `query NftOwners($contract: String) {
-      nftContracts(first: 1,
-        where:{id:$contract}
+    query: `query NftOwners($contract: [String]) {
+      nftContracts(
+        where: { id_in: $contract }
       ) {
         id
         name

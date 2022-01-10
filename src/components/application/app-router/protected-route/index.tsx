@@ -11,9 +11,8 @@ type TProps = {
 }
 
 const ProtectedRoute: FC<TProps>  = ({ component: Component, loggedIn, ...props }) => {
-  console.log({ loggedIn })
   return (
-    <Route>
+    <Route {...props}>
       {() =>
         loggedIn ? <Component {...props} /> : <Redirect to="/" />
       }

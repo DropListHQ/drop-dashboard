@@ -5,24 +5,14 @@ import { Campaigns } from './styled-components'
 import { RootState } from 'data/store';
 import { connect } from 'react-redux';
 import { Container, Text } from './styled-components'
-import * as communityAsyncActions from 'data/store/reducers/communities/async-actions'
 import Icons from 'icons';
 import { useHistory } from 'react-router-dom'
-import { Dispatch } from 'redux';
-import { CommunitiesActions } from 'data/store/reducers/communities/types'
-import { TCommunities } from 'data/store/reducers/communities/types';
+
 
 
 type TProps = {
   connectWallet: () => void
 }
-
-const mapDispatcherToProps = (dispatch: Dispatch<CommunitiesActions>) => {
-  return {
-    getCommunityData: (contractAddress: string, communities: TCommunities) => communityAsyncActions.getCommunityData(dispatch, contractAddress, communities)
-  }
-}
-
 
 const mapStateToProps = ({
   drops: { retroDrops },
@@ -34,9 +24,9 @@ const mapStateToProps = ({
   communities
 })
 
-type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps>
+type ReduxType = ReturnType<typeof mapStateToProps>
 
-const RetroactiveDrops: FC<ReduxType & TProps> = ({ retroDrops, address, connectWallet, getCommunityData, communities }) => {
+const CampaignsPage: FC<ReduxType & TProps> = ({ retroDrops, address, connectWallet, communities }) => {
   const currentCampaigns = retroDrops.filter(item => item.address === address)
   const history = useHistory()
   return <div>
@@ -46,7 +36,7 @@ const RetroactiveDrops: FC<ReduxType & TProps> = ({ retroDrops, address, connect
         {currentCampaigns.map(item => {
           return <Campaign
             title={item.title}
-            status='active'
+            status={item.status || 'active'}
             image={item.logoURL}
             id={item.ipfsHash}
             key={item.ipfsHash}
@@ -71,19 +61,17 @@ const RetroactiveDrops: FC<ReduxType & TProps> = ({ retroDrops, address, connect
 
         {communities.map(item => <CommunityWidget
           title={item.name || 'Loading'}
-          description='666 holders'
-          actionOnLoad={() => {
-            getCommunityData(item.id, communities)
-          }}
+          description={`${item.numOwners} holders`}
           buttonTitle='Download .csv'
           action={() => {
             console.log('hello')
           }}
+          disabled
         />)}
       </Campaigns>
     </Container>
   </div>
 }
 
-export default connect(mapStateToProps, mapDispatcherToProps)(RetroactiveDrops)
+export default connect(mapStateToProps)(CampaignsPage)
 

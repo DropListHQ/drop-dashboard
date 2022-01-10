@@ -1,7 +1,11 @@
 import { FC } from 'react'
 import { Campaign, CampaignStatus, CampaignTitle, CampaignImage, CampaignButton } from './styled-components'
 import { copyToClipboard } from 'helpers'
+import { useHistory } from 'react-router-dom'
+
 const { REACT_APP_CLAIM_URL } = process.env
+
+
 
 type TProps = {
   status: 'active' | 'stopped' | 'draft',
@@ -16,12 +20,16 @@ const CampaignComponent: FC<TProps> = ({
   id,
   status
 }) => {
+  const history = useHistory()
   return <Campaign>
     <CampaignStatus status={status}>{status}</CampaignStatus>
     <CampaignImage src={image} />
     <CampaignTitle>{title}</CampaignTitle>
     <CampaignButton
-      onClick={() => window.open(`${REACT_APP_CLAIM_URL}/${id}`, '_blank')}
+      onClick={() => {
+        history.push(`/campaigns/${id}`)
+        // window.open(`${REACT_APP_CLAIM_URL}/${id}`, '_blank')
+      }}
       title="Campaign’s Details"
       appearance='inverted'
     />

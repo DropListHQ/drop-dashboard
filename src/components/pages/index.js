@@ -3,7 +3,7 @@ import Page from './page/index.tsx'
 import NotFound from './not-found/index.tsx'
 import Campaigns from './campaigns/index.tsx'
 import CampaignsCreate from './campaigns-create/index.tsx'
-
+import CampaignsDetails from './campaigns-details/index.tsx'
 // import ProtectedRoute from './protected-route'
 // import Authorize from './authorize'
 // campaigns
@@ -14,7 +14,8 @@ export {
   Page,
   NotFound,
   Campaigns,
-  CampaignsCreate
+  CampaignsCreate,
+  CampaignsDetails
 //   ProtectedRoute,
 //   Authorize
 }

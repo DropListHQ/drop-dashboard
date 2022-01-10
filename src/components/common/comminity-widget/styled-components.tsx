@@ -74,6 +74,11 @@ export const WidgetButton = styled.button`
   padding: 0 10px;
   border-radius: 20px;
   background-color: transparent;
+
+  ${props => props.disabled && css`
+    cursor: not-allowed;
+    opacity: .3;
+  `}
 `
 
 export const WidgetIconBlank = styled.div`
