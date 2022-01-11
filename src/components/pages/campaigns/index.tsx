@@ -7,8 +7,9 @@ import { connect } from 'react-redux';
 import { Container, Text } from './styled-components'
 import Icons from 'icons';
 import { useHistory } from 'react-router-dom'
-
-
+import * as communitiesAsyncActions from 'data/store/reducers/communities/async-actions'
+import { CommunitiesActions } from 'data/store/reducers/communities/types'
+import { Dispatch } from 'redux';
 
 type TProps = {
   connectWallet: () => void
@@ -24,9 +25,17 @@ const mapStateToProps = ({
   communities
 })
 
-type ReduxType = ReturnType<typeof mapStateToProps>
+// const getOwnersData
 
-const CampaignsPage: FC<ReduxType & TProps> = ({ retroDrops, address, connectWallet, communities }) => {
+const mapDispatcherToProps = (dispatch: Dispatch<CommunitiesActions>) => {
+  return {
+    getOwnersData: (contract: string) => communitiesAsyncActions.getOwnersData(dispatch, contract)
+  }
+}
+
+type ReduxType = ReturnType<typeof mapStateToProps>  & ReturnType<typeof mapDispatcherToProps>
+
+const CampaignsPage: FC<ReduxType & TProps> = ({ retroDrops, address, connectWallet, communities, getOwnersData }) => {
   const currentCampaigns = retroDrops.filter(item => item.address === address)
   const history = useHistory()
   return <div>
@@ -61,17 +70,18 @@ const CampaignsPage: FC<ReduxType & TProps> = ({ retroDrops, address, connectWal
 
         {communities.map(item => <CommunityWidget
           title={item.name || 'Loading'}
+          key={item.id}
           description={`${item.numOwners} holders`}
           buttonTitle='Download .csv'
           action={() => {
-            console.log('hello')
+            // console.log('hello')
+            getOwnersData(item.id)
           }}
-          disabled
         />)}
       </Campaigns>
     </Container>
   </div>
 }
 
-export default connect(mapStateToProps)(CampaignsPage)
+export default connect(mapStateToProps, mapDispatcherToProps)(CampaignsPage)
 

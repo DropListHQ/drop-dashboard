@@ -23,17 +23,17 @@ const defineTitle: TDefineTitle = (path) => {
   return <TitleContainer>
     {path.map((item, idx) => {
       if (idx === path.length - 1) { return null }
-      return <Title>{item}/</Title>
+      return <Title>{item} / </Title>
     })}
     <Title current>{path[path.length - 1]}</Title>
   </TitleContainer>
 }
 
-const Breadcrumbs: FC<TProps> = ({ children, path, description }) => {
+const Breadcrumbs: FC<TProps> = ({ returnAction, path, description }) => {
   return <BreadcrumbsComponent>
-    <ReturnButton>
+    {returnAction && <ReturnButton onClick={returnAction}>
       <Icons.GoBackIcon />Back
-    </ReturnButton>
+    </ReturnButton>}
     {defineTitle(path)}
     {description && <Description>{description}</Description>}
   </BreadcrumbsComponent>

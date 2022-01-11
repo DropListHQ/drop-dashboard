@@ -15,6 +15,7 @@ import Loader from './loader'
 import Title from './title'
 import Campaign from './campaign'
 import Breadcrumbs from './breadcrumbs'
+import InfoBlock from './info-block'
 
 export {
   Header,
@@ -33,5 +34,6 @@ export {
   CommunityWidget,
   Footer,
   Campaign,
-  Breadcrumbs
+  Breadcrumbs,
+  InfoBlock
 }

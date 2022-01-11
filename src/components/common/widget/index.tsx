@@ -2,12 +2,11 @@ import React, { FC } from 'react'
 import { WidgetComponent } from './styled-components'
 
 interface Props {
-  title: string,
-  subtitle?: string
+  className?: string
 }
 
-const Widget: FC<Props> = ({ children, title, subtitle }) => {
-  return <WidgetComponent>
+const Widget: FC<Props> = ({ children, className }) => {
+  return <WidgetComponent className={className}>
     {children}
   </WidgetComponent>
 }

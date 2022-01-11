@@ -1,7 +1,8 @@
 import { useState, FC, useEffect } from 'react'
 import {
   Widget,
-  DataBlock
+  DataBlock,
+  Breadcrumbs
 } from 'components/common'
 import { parseRecipientsData, parseBalanceMap, defineNetworkName, capitalize } from 'helpers'
 import { useHistory } from 'react-router-dom'
@@ -66,6 +67,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
         description: string,
         dropLogoURL: string,
         recipientsData: TRecipientsData,
+        type: TRetroDropType,
         callback: () => void
       ) => newContractAsyncActions.approve(
         dispatch,
@@ -80,6 +82,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
         description,
         dropLogoURL,
         recipientsData,
+        type,
         callback
       ),
       setStep: (step: TRetroDropStep) => dispatch(newRetroDropActions.setStep(step)),
@@ -91,22 +94,23 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
 
 type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps>
 type onTypeChoose = (type: TRetroDropType) => void
-const defineTitie = (step: TRetroDropStep): number => {
+const defineTitie = (step: TRetroDropStep): string => {
   switch(step) {
     case 'choose_type':
-      return 1
+      return 'Specify type of token to be airdropped:'
     case 'initialize':
-      return 2
+      return 'Enter your contract address:'
     case 'create_tree':
-      return 3
+      return 'Enter recipient addresses and airdrop token IDs'
     case 'publish_ipfs':
-      return 4
+      return 'Add details to your campaign:'
     case 'deploy_contract':
-      return 4
+      return 'Review details of your campaign and give permission to distribute tokens to DropList:'
     case 'give_approval':
-      return 5
+      return `🚀 Are you ready to launch campaign?
+      We are ready!`
     default:
-      return 0
+      return ''
   }
 }
 
@@ -139,13 +143,11 @@ const CampaignsCreate: FC<ReduxType> = ({
   approve
 }) => {
   const [ currentTokenAddress, setCurrentTokenAddress ] = useState('0x35573543F290fef43d62Ad3269BB9a733445ddab')
-  const [ dropContractAddress, setDropContractAddress ] = useState('0xaff4481d10270f50f203e0763e2597776068cbc5')
   const [ recipientsValue, setRecipientsValue ] = useState('0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 4, 1')
   const [ recipients, setRecipients ] = useState<TRecipientsData>({})
   const [ dropTitle, setDropTitle ] = useState('Test Drop')
   const [ dropLogoURL, setDropLogoURL ] = useState('https://eattherich.shop')
   const [ dropDescription, setDropDescription ] = useState('Test')
-  const getTitle = (step: TRetroDropStep) => `Step ${defineTitie(step)}/5`
 
   const cancel = () => setStep('choose_type')
   const history = useHistory()
@@ -159,84 +161,56 @@ const CampaignsCreate: FC<ReduxType> = ({
     return () => { cancel() }
   }, [])
 
+  const bredcrumbs = <Breadcrumbs
+    path={['My campaigns', 'New campaign']}
+    description={defineTitie(step)}
+    returnAction={() => cancel()}
+  />
+
 
   const renderWidget = (step: TRetroDropStep) => {
     switch(step) {
       case 'choose_type':
-        return <CampaignType onTypeChoose={onTypeChoose} />
+        return <>
+          {bredcrumbs}
+          <CampaignType onTypeChoose={onTypeChoose} />
+        </>
       case 'initialize':
-        return <Widget title={getTitle(step)} subtitle='Specify the token to be airdropped'>
-          <WidgetInput
-            title='Token’s address'
-            onChange={value => { setCurrentTokenAddress(value); return value}}
-            value={currentTokenAddress}
-          />
-          <WidgetControls>
-            <WidgetButton
-              title='Cancel'
-              appearance='inverted'
-              onClick={cancel}
+        return <>
+          {bredcrumbs}
+          <Widget>
+            <WidgetInput
+              title='Token’s address'
+              onChange={value => { setCurrentTokenAddress(value); return value}}
+              value={currentTokenAddress}
             />
-            <WidgetButton
-              title='Continue'
-              disabled={currentTokenAddress.length !== 42}
-              onClick={() => {
-                setTokenAddress(currentTokenAddress)
-                setStep('create_tree')
-              }}
-            />
-          </WidgetControls>
-        </Widget>
+            <WidgetControls>
+              <WidgetButton
+                title='Cancel'
+                appearance='inverted'
+                onClick={cancel}
+              />
+              <WidgetButton
+                title='Continue'
+                disabled={currentTokenAddress.length !== 42}
+                onClick={() => {
+                  setTokenAddress(currentTokenAddress)
+                  setStep('create_tree')
+                }}
+              />
+            </WidgetControls>
+          </Widget>
+        </>
 
       case 'create_tree':
-        return <Widget title={getTitle(step)} subtitle='Enter recipient addresses and airdrop token IDs'>
-          <WidgetTextarea
-            title='Address, token ID, amount'
-            onChange={value => { setRecipientsValue(value); return value}}
-            value={recipientsValue}
-            placeholder='0xdfs7d8f7s8df98df09s8df98s0df9s80df90sdf, 1, 1&#13;&#10;0xdfs7d8f7s8df98df09s8df98s0df9s80df90sdf, 2, 1&#13;&#10;... and so on'
-          />
-          <WidgetControls>
-            <WidgetButton
-              title='Start over'
-              appearance='inverted'
-              onClick={cancel}
-            />
-            <WidgetButton
-              title='Parse data'
-              disabled={!recipientsValue}
-              onClick={() => {
-                const recipientsData = parseRecipientsData(recipientsValue)
-                console.log({ recipientsData })
-                if (!recipientsData) {
-                  return 
-                }
-                setRecipients(recipientsData)
-                const merkleData = parseBalanceMap(recipientsData)
-                setMerkleTree(merkleData)
-                setStep('publish_ipfs')
-              }}
-            />
-          </WidgetControls>
-        </Widget>
-        case 'publish_ipfs':
-          return <Widget title={getTitle(step)} subtitle='Publish your RetroDrop page to IPFS'>
-            <WidgetInput
-              title='Enter title here'
-              onChange={value => { setDropTitle(value); return value}}
-              value={dropTitle}
-            />
-            <WidgetInput
-              title='Logo URL'
-              onChange={value => { setDropLogoURL(value); return value}}
-              value={dropLogoURL}
-              placeholder='https://'
-            />
+        return <>
+          {bredcrumbs}
+          <Widget>
             <WidgetTextarea
-              title='Description'
-              onChange={value => { setDropDescription(value); return value}}
-              value={dropDescription}
-              placeholder='Enter description here'
+              title='Address, token ID, amount'
+              onChange={value => { setRecipientsValue(value); return value}}
+              value={recipientsValue}
+              placeholder='0xdfs7d8f7s8df98df09s8df98s0df9s80df90sdf, 1, 1&#13;&#10;0xdfs7d8f7s8df98df09s8df98s0df9s80df90sdf, 2, 1&#13;&#10;... and so on'
             />
             <WidgetControls>
               <WidgetButton
@@ -245,136 +219,188 @@ const CampaignsCreate: FC<ReduxType> = ({
                 onClick={cancel}
               />
               <WidgetButton
-                title='Publish'
-                loading={loading}
-                appearance={loading ? 'gradient' : undefined}
-                disabled={!dropTitle || !tokenAddress}
+                title='Parse data'
+                disabled={!recipientsValue}
                 onClick={() => {
-                  if (!tokenAddress || !chainId) { return }
-                  createIPFS(merkleTree, dropTitle, dropDescription, dropLogoURL, tokenAddress, chainId)
-                }}
-              />
-            </WidgetControls>
-          </Widget>
-        case 'deploy_contract':
-          return <Widget title={`${getTitle(step)}. Summary`}>
-            <DataBlock
-              title='RetroDrop’s title'
-              text={dropTitle}
-            />
-            <WidgetDataSplit>
-              <WidgetDataBlock
-                title='Network'
-                text={capitalize(defineNetworkName(chainId))}
-              />
-              <WidgetDataBlock
-                title='Type of token'
-                text='ERC1155'
-              />
-            </WidgetDataSplit>
-            <DataBlock
-              title='Token Address'
-              text={currentTokenAddress}
-            />
-            <WidgetDataSplit>
-              <WidgetDataBlock
-                title='Total NFTs dropped'
-                text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
-              />
-              <WidgetDataBlock
-                title='Recipients'
-                text={recipients ? Object.keys(recipients).length : 0}
-              />
-            </WidgetDataSplit>
-            <WidgetControls>
-              <WidgetButton
-                title='Start over'
-                appearance='inverted'
-                onClick={cancel}
-              />
-              <WidgetButton
-                title='Deploy'
-                appearance={contractLoading ? 'gradient' : undefined}
-                disabled={Boolean(!tokenAddress || !ipfs)}
-                loading={contractLoading}
-                onClick={() => {
-                  if (tokenAddress && ipfs) {
-                    createDrop(provider, merkleTree, tokenAddress, ipfs)
+                  const recipientsData = parseRecipientsData(recipientsValue)
+                  console.log({ recipientsData })
+                  if (!recipientsData) {
+                    return 
                   }
+                  setRecipients(recipientsData)
+                  const merkleData = parseBalanceMap(recipientsData)
+                  setMerkleTree(merkleData)
+                  setStep('publish_ipfs')
                 }}
               />
             </WidgetControls>
           </Widget>
-        case 'give_approval':
-          return <Widget title={`${getTitle(step)}. Approval`}>
-            <DataBlock
-              title='RetroDrop’s title'
-              text={dropTitle}
-            />
-            <WidgetDataSplit>
-              <WidgetDataBlock
-                title='Network'
-                text='Ethereum Mainnet'
+        </>
+        case 'publish_ipfs':
+          return <>
+            {bredcrumbs}
+            <Widget>
+              <WidgetInput
+                title='Enter title here'
+                onChange={value => { setDropTitle(value); return value}}
+                value={dropTitle}
               />
-              <WidgetDataBlock
-                title='Type of token'
-                text='ERC1155'
+              <WidgetInput
+                title='Logo URL'
+                onChange={value => { setDropLogoURL(value); return value}}
+                value={dropLogoURL}
+                placeholder='https://'
               />
-            </WidgetDataSplit>
-            <DataBlock
-              title='Token Address'
-              text={currentTokenAddress}
-            />
-            <DataBlock
-              title='Your retrodrop contract'
-              text={dropAddress || ''}
-            />
-            <WidgetDataSplit>
-              <WidgetDataBlock
-                title='Total NFTs dropped'
-                text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
+              <WidgetTextarea
+                title='Description'
+                onChange={value => { setDropDescription(value); return value}}
+                value={dropDescription}
+                placeholder='Enter description here'
               />
-              <WidgetDataBlock
-                title='Recipients'
-                text={Object.keys(recipients || {}).length}
+              <WidgetControls>
+                <WidgetButton
+                  title='Start over'
+                  appearance='inverted'
+                  onClick={cancel}
+                />
+                <WidgetButton
+                  title='Publish'
+                  loading={loading}
+                  appearance={loading ? 'gradient' : undefined}
+                  disabled={!dropTitle || !tokenAddress}
+                  onClick={() => {
+                    if (!tokenAddress || !chainId) { return }
+                    createIPFS(merkleTree, dropTitle, dropDescription, dropLogoURL, tokenAddress, chainId)
+                  }}
+                />
+              </WidgetControls>
+            </Widget>
+          </>
+        case 'deploy_contract':
+          return <>
+            {bredcrumbs}
+            <Widget>
+              <DataBlock
+                title='RetroDrop’s title'
+                text={dropTitle}
               />
-            </WidgetDataSplit>
-            <WidgetControls>
-              <WidgetButton
-                title='Start over'
-                appearance='inverted'
-                onClick={cancel}
+              <WidgetDataSplit>
+                <WidgetDataBlock
+                  title='Network'
+                  text={capitalize(defineNetworkName(chainId))}
+                />
+                <WidgetDataBlock
+                  title='Type of token'
+                  text='ERC1155'
+                />
+              </WidgetDataSplit>
+              <DataBlock
+                title='Token Address'
+                text={currentTokenAddress}
               />
-              <WidgetButton
-                title='Give approval'
-                disabled={!tokenAddress || !dropAddress}
-                loading={contractLoading}
-                appearance={contractLoading ? 'gradient' : undefined}
-                onClick={() => {
-                  if (!tokenAddress || !dropAddress || !ipfs || !chainId) { return }
-                  approve(
-                    provider,
-                    tokenAddress,
-                    address,
-                    dropAddress,
-                    ipfs,
-                    dropTitle,
-                    address,
-                    chainId,
-                    dropDescription,
-                    dropLogoURL,
-                    recipients,
-                    () => {
-                      history.push('/')
+              <WidgetDataSplit>
+                <WidgetDataBlock
+                  title='Total NFTs dropped'
+                  text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
+                />
+                <WidgetDataBlock
+                  title='Recipients'
+                  text={recipients ? Object.keys(recipients).length : 0}
+                />
+              </WidgetDataSplit>
+              <WidgetControls>
+                <WidgetButton
+                  title='Start over'
+                  appearance='inverted'
+                  onClick={cancel}
+                />
+                <WidgetButton
+                  title='Deploy'
+                  appearance={contractLoading ? 'gradient' : undefined}
+                  disabled={Boolean(!tokenAddress || !ipfs)}
+                  loading={contractLoading}
+                  onClick={() => {
+                    if (tokenAddress && ipfs) {
+                      createDrop(provider, merkleTree, tokenAddress, ipfs)
                     }
-                  )
-                }}
+                  }}
+                />
+              </WidgetControls>
+            </Widget>
+          </>
+        case 'give_approval':
+          return <>
+            {bredcrumbs}
+            <Widget>
+              <DataBlock
+                title='RetroDrop’s title'
+                text={dropTitle}
               />
-            </WidgetControls>
-          </Widget>
+              <WidgetDataSplit>
+                <WidgetDataBlock
+                  title='Network'
+                  text='Ethereum Mainnet'
+                />
+                <WidgetDataBlock
+                  title='Type of token'
+                  text='ERC1155'
+                />
+              </WidgetDataSplit>
+              <DataBlock
+                title='Token Address'
+                text={currentTokenAddress}
+              />
+              <DataBlock
+                title='Your retrodrop contract'
+                text={dropAddress || ''}
+              />
+              <WidgetDataSplit>
+                <WidgetDataBlock
+                  title='Total NFTs dropped'
+                  text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
+                />
+                <WidgetDataBlock
+                  title='Recipients'
+                  text={Object.keys(recipients || {}).length}
+                />
+              </WidgetDataSplit>
+              <WidgetControls>
+                <WidgetButton
+                  title='Start over'
+                  appearance='inverted'
+                  onClick={cancel}
+                />
+                <WidgetButton
+                  title='Give approval'
+                  disabled={!tokenAddress || !dropAddress}
+                  loading={contractLoading}
+                  appearance={contractLoading ? 'gradient' : undefined}
+                  onClick={() => {
+                    if (!tokenAddress || !dropAddress || !ipfs || !chainId || !type) { return }
+                    approve(
+                      provider,
+                      tokenAddress,
+                      address,
+                      dropAddress,
+                      ipfs,
+                      dropTitle,
+                      address,
+                      chainId,
+                      dropDescription,
+                      dropLogoURL,
+                      recipients,
+                      type,
+                      () => {
+                        history.push('/')
+                      }
+                    )
+                  }}
+                />
+              </WidgetControls>
+            </Widget>
+          </>
         default:
-          return <Widget title={getTitle(step)}>
-          </Widget>
+          return null
     }
   }
 

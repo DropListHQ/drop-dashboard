@@ -26,4 +26,5 @@ export const DataBlock = styled.div.attrs(props => ({
   className: props.className
 }))<DataBlockProps>`
   margin-bottom: 24px;
+  
 `

@@ -1,10 +1,43 @@
 import styled from 'styled-components'
+import { InfoBlock, Widget } from 'components/common'
+
 
 export const LinkContainer = styled.div`
   padding: 16px 16px 36px;
   max-width: 460px;
   background: ${props => props.theme.blankColor};
   border-radius: 8px;
+  border: 1px solid ${props => props.theme.primaryBorderColor};
+`
+
+export const InfoBlockStyled = styled(InfoBlock)`
+  max-width: 220px;
+  margin-bottom: 8px;
+  margin-right: 20px;
+
+  &:last-child {
+    margin-right: 0px;
+  }
+`
+
+export const Description = styled.div`
+  display: flex;
+  align-items: flex-start;
+`
+
+export const WidgetContainer = styled(Widget)`
+  flex: 1;
+  margin-right: 20px;
+`
+
+export const WidgetDataSplit = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 16px;
+`
+
+export const InfoBlockContainer = styled.div`
+  display: flex;
 `
 
 export const Link = styled.div`

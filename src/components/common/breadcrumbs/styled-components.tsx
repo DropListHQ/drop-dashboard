@@ -29,7 +29,7 @@ type TTitle = {
 export const Title = styled.h3<TTitle>`
   font-size: 24px;
   font-weight: 700;
-  margin: 0;
+  margin: 0 4px 0 0;
   color: ${props => props.theme.noteTextColor};
 
   ${props => props.current && css`

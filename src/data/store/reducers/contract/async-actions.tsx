@@ -6,7 +6,7 @@ import { ContractActions } from './types';
 import { NewRetroDropActions } from '../new-retro-drop/types';
 import { DropsActions } from '../drops/types';
 import { ethers } from 'ethers';
-import { TMerkleTree, TRecipientsData } from 'types'
+import { TMerkleTree, TRecipientsData, TRetroDropType } from 'types'
 import { RetroDropContract, ERC1155Contract } from 'abi'
 
 const {
@@ -70,6 +70,7 @@ export async function approve(
 	description: string,
 	logoURL: string,
 	recipients: TRecipientsData,
+	type: TRetroDropType,
 	callback: () => void
 ) {
   dispatch(actionsContract.setLoading(true))
@@ -98,7 +99,9 @@ export async function approve(
 			description,
 			logoURL,
 			status: 'active',
-			tokenAddress
+			tokenAddress,
+			recipients,
+			type
 		}))
 		if (callback) { callback() }
 	}

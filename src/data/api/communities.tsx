@@ -4,11 +4,25 @@ const instance = axios.create({
   baseURL: 'https://api.studio.thegraph.com/query/9597/dropowners1/0.0.22'
 });
 
+type TOwners = {
+  data: {
+    nfts: {
+      nftOwners: {
+        owner: string
+      }[],
+      tokenID: string
+    }[]
+  },
+  errors?: any
+}
+
+
 const getCommunityData = async (contract: string[]) => {
   const response = await instance.post('/', {
     query: `query NftOwners($contract: [String]) {
       nftContracts(
-        where: { id_in: $contract }
+        where: { id_in: $contract },
+        first: 5
       ) {
         id
         name
@@ -17,11 +31,29 @@ const getCommunityData = async (contract: string[]) => {
     }`,
     variables: { contract }
   })
-  return response
+  return response.data
+}
+
+const getOwners = async (contract: string): Promise<TOwners> => {
+  const response = await instance.post('/', {
+    query: `query NftOwners($contract: String) {
+      nfts(
+        where:{ contract:$contract }
+      ){
+        tokenID
+        nftOwners {
+          owner
+        }
+      }
+    }`,
+    variables: { contract }
+  })
+  return response.data
 }
 
 const communities = {
-  getCommunityData
+  getCommunityData,
+  getOwners
 }
 
 export default communities

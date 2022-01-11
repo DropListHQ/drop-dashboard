@@ -1,4 +1,4 @@
-import { TRetroDropStatus } from './index.js'
+import { TRetroDropStatus, TRecipientsData, TRetroDropType } from './index.js'
 
 type TRetroDrop = {
   title: string,
@@ -8,7 +8,9 @@ type TRetroDrop = {
   description: string,
   logoURL: string,
   status: TRetroDropStatus,
-  tokenAddress: string
+  tokenAddress: string,
+  recipients: TRecipientsData,
+  type: TRetroDropType
 }
 
 export default TRetroDrop
