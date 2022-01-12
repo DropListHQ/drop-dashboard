@@ -25,7 +25,11 @@ export async function connectWallet (dispatch: Dispatch<UserActions>) {
   const provider = await web3Modal.connect();
   const providerWeb3 = new Web3Provider(provider)
   
-  const { chainId } = await providerWeb3.getNetwork()
+  let { chainId } = await providerWeb3.getNetwork()
+  if (chainId !== 4) {
+    alert('Currently only Rinkeby is available.')
+    chainId = 4
+  }
   
   const accounts = await providerWeb3.listAccounts()
   const address = accounts[0] && accounts[0].toLowerCase()
@@ -40,7 +44,11 @@ export async function connectWallet (dispatch: Dispatch<UserActions>) {
   
   // Subscribe to chainId change
   provider.on("chainChanged", (chainId: string) => {
-    const chainIdConverted = parseInt(chainId, 16);
+    let chainIdConverted = parseInt(chainId, 16);
+    if (chainIdConverted !== 4) {
+      alert('Currently only Rinkeby is available.')
+      chainIdConverted = 4
+    }
     dispatch(actions.setChainId(chainIdConverted))
   });
   
