@@ -20,13 +20,22 @@ type TOwners = {
 const getCommunityData = async (contract: string[]) => {
   const response = await instance.post('/', {
     query: `query NftOwners($contract: [String]) {
-      nftContracts(
+      nftContracts (
         where: { id_in: $contract },
         first: 5
       ) {
         id
         name
-        numTokens numOwners
+        numTokens
+        numOwners
+        nftOwners (first: 999) {
+          owner
+          contract {
+            name
+          }
+        }
+        symbol
+        type
       }
     }`,
     variables: { contract }
