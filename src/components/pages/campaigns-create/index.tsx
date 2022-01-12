@@ -143,7 +143,7 @@ const CampaignsCreate: FC<ReduxType> = ({
   approve
 }) => {
   const [ currentTokenAddress, setCurrentTokenAddress ] = useState('0x35573543F290fef43d62Ad3269BB9a733445ddab')
-  const [ recipientsValue, setRecipientsValue ] = useState('0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 4, 1')
+  const [ recipientsValue, setRecipientsValue ] = useState('0xdfs7d8f7s8df98df09s8df98s0df9s80df90sdf, 1, 1, 1')
   const [ recipients, setRecipients ] = useState<TRecipientsData>({})
   const [ dropTitle, setDropTitle ] = useState('Test Drop')
   const [ dropLogoURL, setDropLogoURL ] = useState('https://eattherich.shop')
@@ -207,10 +207,21 @@ const CampaignsCreate: FC<ReduxType> = ({
           {bredcrumbs}
           <Widget>
             <WidgetTextarea
-              title='Address, token ID, amount'
+              title='Receiver address, token ID, amount, max supply'
               onChange={value => { setRecipientsValue(value); return value}}
               value={recipientsValue}
-              placeholder='0xdfs7d8f7s8df98df09s8df98s0df9s80df90sdf, 1, 1&#13;&#10;0xdfs7d8f7s8df98df09s8df98s0df9s80df90sdf, 2, 1&#13;&#10;... and so on'
+              placeholder={`Be careful and paste here info in the following order:
+
+Receiver address, token ID, amount, max supply
+
+Max supply — maximum amount of tokens that you would like to distribute. Max supply value should be equal for lines with an equal token ID
+
+0x70dfbd1149250eddeae6ed2381993b517a1c9ce8, 1, 1, 3
+0x203477162865dd22488a60e3e478e7795af95052, 2, 1, 1
+0x2693ad693d042b9c04d2dce0a44a7608ea1f7d47, 1, 2, 3
+
+and so on
+              `}
             />
             <WidgetControls>
               <WidgetButton
@@ -222,10 +233,12 @@ const CampaignsCreate: FC<ReduxType> = ({
                 title='Parse data'
                 disabled={!recipientsValue}
                 onClick={() => {
-                  const recipientsData = parseRecipientsData(recipientsValue)
+                  // if (!type) return
+                  const type = 'erc1155'
+                  const recipientsData = parseRecipientsData(type, recipientsValue)
                   console.log({ recipientsData })
                   if (!recipientsData) {
-                    return 
+                    return alert('Please check format for ERC1155')
                   }
                   setRecipients(recipientsData)
                   const merkleData = parseBalanceMap(recipientsData)

@@ -24,13 +24,13 @@ export const TextareaField = styled.textarea`
   color: ${props => props.theme.primaryTextColor};
   font-size: 14px;
   width: 100%;
-  min-height: 196px;
+  min-height: 440px;
   font-family: Inter;
   resize: none;
   font-weight: normal;
   font-size: 14px;
   line-height: 16px;
-  padding: 12px 16px;
+  padding: 12px 11px;
   border: 2px solid ${props => props.theme.primaryHighlightColor};
   border-radius: 8px;
 `
