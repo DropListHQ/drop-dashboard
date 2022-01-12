@@ -143,10 +143,10 @@ const CampaignsCreate: FC<ReduxType> = ({
   approve
 }) => {
   const [ currentTokenAddress, setCurrentTokenAddress ] = useState('0x35573543F290fef43d62Ad3269BB9a733445ddab')
-  const [ recipientsValue, setRecipientsValue ] = useState('0xdfs7d8f7s8df98df09s8df98s0df9s80df90sdf, 1, 1, 1')
+  const [ recipientsValue, setRecipientsValue ] = useState('0x35573543f290fef43d62ad3269bb9a733445ddab, 4, 2, 2')
   const [ recipients, setRecipients ] = useState<TRecipientsData>({})
   const [ dropTitle, setDropTitle ] = useState('Test Drop')
-  const [ dropLogoURL, setDropLogoURL ] = useState('https://eattherich.shop')
+  const [ dropLogoURL, setDropLogoURL ] = useState('https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Anarchist_logo.svg/1079px-Anarchist_logo.svg.png')
   const [ dropDescription, setDropDescription ] = useState('Test')
 
   const cancel = () => setStep('choose_type')
