@@ -15,7 +15,7 @@ type TCommunityWidget = {
   title: string,
   description: string,
   action: () => void,
-  image?: string,
+  image?: string | undefined,
   icon?: React.ReactNode,
   buttonTitle: string,
   inverted?: boolean,

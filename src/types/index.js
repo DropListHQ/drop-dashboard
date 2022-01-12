@@ -5,6 +5,7 @@ import TRetroDropType from './retro-drop-type'
 import TRetroDropStatus from './retro-drop-status'
 import TRecipientsData from './recipients-data'
 import TOwners from './owners'
+import TCommunities from './communities'
 
 export {
   TMerkleTree,
@@ -13,5 +14,6 @@ export {
   TRetroDropType,
   TRetroDropStatus,
   TRecipientsData,
-  TOwners
+  TOwners,
+  TCommunities
 }

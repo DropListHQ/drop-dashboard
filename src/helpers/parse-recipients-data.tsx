@@ -1,4 +1,9 @@
-const parseData = (data: string): {
+import { checkRecipientsDataFormat } from './index'
+import {
+  TRetroDropType, 
+} from 'types'
+
+const parseData = (type: TRetroDropType, data: string): {
   [recipient: string]: {
     tokenId: string | number,
     amount: number,
@@ -9,66 +14,61 @@ const parseData = (data: string): {
   if (!data) {
     return null
   }
-
-  const recipients = data.split('\n')
-  const recipientsFormatValid = recipients.every(item => {
-    const itemDivided = item.split(',').map((item: string) => item.trim())
-    console.log(itemDivided[0])
-    console.log(itemDivided.length)
-    return itemDivided[0].length === 42 && itemDivided.length === 3
-  })
-
+  const recipientsFormatValid = checkRecipientsDataFormat(type, data)
   if (!recipientsFormatValid) {
     return null
   }
+  const recipients = data.split('\n')
 
   const recipientsData = recipients.reduce<{
     result: {
       [recipient: string]: {
         tokenId: string | number,
-        amount: number
+        amount: number,
+        maxSupply: number
       }
     },
-    supplies: {
-      [tokenId: string]: number
-    }
+    // supplies: {
+    //   [tokenId: string]: number
+    // }
   }>((memo, item: string) => {
     const itemSplit = item.split(',').map((item: string) => item.trim())
     return {
-      supplies: {
-        ...memo.supplies,
-        [itemSplit[1]]: (memo.supplies[itemSplit[1]] || 0) + Number(itemSplit[2])
-      },
+      // supplies: {
+      //   ...memo.supplies,
+      //   [itemSplit[1]]: (memo.supplies[itemSplit[1]] || 0) + Number(itemSplit[2])
+      // },
       result: {
         ...memo.result,
         [itemSplit[0]]: {
           tokenId: itemSplit[1],
-          amount: Number(itemSplit[2])
+          amount: Number(itemSplit[2]),
+          maxSupply: Number(itemSplit[3])
         }
       }
     }
   }, {
     result: {},
-    supplies: {}
+    // supplies: {}
   })
 
-  const final = Object.keys(recipientsData.result).reduce<{
-    [recipient: string]: {
-      tokenId: string | number,
-      amount: number,
-      maxSupply: number
-    }
-  }>((memo, address: string) => {
-    return {
-      ...memo,
-      [address]: {
-        ...recipientsData.result[address],
-        maxSupply: recipientsData.supplies[recipientsData.result[address].tokenId]
-      }
-    }
-  }, {})
-  console.log({ final })
-  return final
+  // const final = Object.keys(recipientsData.result).reduce<{
+  //   [recipient: string]: {
+  //     tokenId: string | number,
+  //     amount: number,
+  //     maxSupply: number
+  //   }
+  // }>((memo, address: string) => {
+  //   return {
+  //     ...memo,
+  //     [address]: {
+  //       ...recipientsData.result[address],
+  //       maxSupply: recipientsData.supplies[recipientsData.result[address].tokenId]
+  //     }
+  //   }
+  // }, {})
+
+  return recipientsData.result
 }
 
 export default parseData

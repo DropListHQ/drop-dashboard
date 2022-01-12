@@ -2,7 +2,6 @@ import { Dispatch } from 'redux';
 import * as actionsCommunities from './actions';
 import { CommunitiesActions } from './types';
 import { communities } from 'data/api'
-import { TOwners } from 'types'
 import { getCSV } from 'helpers'
 type TReduce = { owner: string, tokenID: string }[]
 

@@ -6,6 +6,7 @@ import parseBalanceMap from './merkle/parse-balance-map'
 import defineJSONRpcUrl from './define-json-rpc-url'
 import copyToClipboard from './copy-to-clipboard'
 import getCSV from './get-csv'
+import checkRecipientsDataFormat from './check-recipients-data-format'
 
 export {
   shortenString,
@@ -15,5 +16,6 @@ export {
   parseBalanceMap,
   defineJSONRpcUrl,
   getCSV,
-  copyToClipboard
+  copyToClipboard,
+  checkRecipientsDataFormat
 }

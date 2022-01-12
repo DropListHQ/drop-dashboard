@@ -9,7 +9,8 @@ import {
   Page,
   Campaigns,
   CampaignsCreate,
-  CampaignsDetails
+  CampaignsDetails,
+  Communities
 //   NotFound,
 //   ProtectedRoute,
 //   Authorize
@@ -37,7 +38,7 @@ type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispa
 
 const AppRouter: FC<ReduxType> = ({ address, connectWallet, getCommunityData }) => {
   useEffect(() => {
-    getCommunityData(communities)
+    getCommunityData(Object.keys(communities))
   }, [])
 
   return <HashRouter>
@@ -56,6 +57,9 @@ const AppRouter: FC<ReduxType> = ({ address, connectWallet, getCommunityData }) 
           loggedIn={Boolean(address)}
           component={CampaignsDetails}
         />
+        <Route path='/communities' exact={true} render={props => <Communities
+          {...props}
+        />} />
         <Route path='/' exact={true} render={props => <Campaigns
           connectWallet={connectWallet}
           {...props}

@@ -76,12 +76,13 @@ export const HeaderMenuItemActiveClass = 'headerMenuItemActiveClass'
 export const HeaderMenuItem = styled(NavLink)`
   color: ${props => props.theme.primaryTextColor};
   text-decoration: none;
-  padding: 20px 32px;
+  margin-right: 32px;
   line-height: 1;
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
   transition: background-color .3s;
+
 
   &.${HeaderMenuItemActiveClass} {
     text-decoration: underline;

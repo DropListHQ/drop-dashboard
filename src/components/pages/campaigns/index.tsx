@@ -10,9 +10,14 @@ import { useHistory } from 'react-router-dom'
 import * as communitiesAsyncActions from 'data/store/reducers/communities/async-actions'
 import { CommunitiesActions } from 'data/store/reducers/communities/types'
 import { Dispatch } from 'redux';
+import communities from 'configs/communities'
 
 type TProps = {
   connectWallet: () => void
+}
+
+interface INameToValueMap {
+    [key: string]: any;
 }
 
 const mapStateToProps = ({
@@ -22,7 +27,7 @@ const mapStateToProps = ({
 }: RootState) => ({
   retroDrops,
   address,
-  communities
+  loadedCommunities: communities
 })
 
 // const getOwnersData
@@ -35,7 +40,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<CommunitiesActions>) => {
 
 type ReduxType = ReturnType<typeof mapStateToProps>  & ReturnType<typeof mapDispatcherToProps>
 
-const CampaignsPage: FC<ReduxType & TProps> = ({ retroDrops, address, connectWallet, communities, getOwnersData }) => {
+const CampaignsPage: FC<ReduxType & TProps> = ({ retroDrops, address, connectWallet, loadedCommunities, getOwnersData }) => {
   const currentCampaigns = retroDrops.filter(item => item.address === address)
   const history = useHistory()
   return <div>
@@ -68,16 +73,20 @@ const CampaignsPage: FC<ReduxType & TProps> = ({ retroDrops, address, connectWal
           icon={<Icons.LinkdropWhiteLogo />}
         />
 
-        {communities.map(item => <CommunityWidget
-          title={item.name || 'Loading'}
-          key={item.id}
-          description={`${item.numOwners} holders`}
-          buttonTitle='Download .csv'
-          action={() => {
-            // console.log('hello')
-            getOwnersData(item.id)
-          }}
-        />)}
+        {loadedCommunities.map((item: INameToValueMap) => {
+          const image = communities[item.id]
+          return <CommunityWidget
+            title={item.name || 'Loading'}
+            key={item.id}
+            description={`${item.numOwners} holders`}
+            buttonTitle='Download .txt'
+            action={() => {
+              // console.log('hello')
+              getOwnersData(item.id)
+            }}
+            image={image.logo}
+          />
+        })}
       </Campaigns>
     </Container>
   </div>
