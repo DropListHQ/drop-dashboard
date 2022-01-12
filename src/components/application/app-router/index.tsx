@@ -1,77 +1,66 @@
-import React, { useEffect, useState, FC } from 'react'
-import { Route, Switch, HashRouter, Redirect, useLocation } from 'react-router-dom'
+import React, { useEffect, FC } from 'react'
+import { Route, Switch, HashRouter } from 'react-router-dom'
 // import { functionalActions } from 'decorators'
-import { history } from 'data/store'
-import Web3Modal from "web3modal";
-import { Web3Provider } from '@ethersproject/providers'
+import ProtectedRoute from './protected-route'
+
 
 import {
-  Main,
+  NotFound,
   Page,
-  RetroactiveDrops,
-  RetroactiveDropsCreate
+  Campaigns,
+  CampaignsCreate,
+  CampaignsDetails
 //   NotFound,
 //   ProtectedRoute,
 //   Authorize
 } from 'components/pages'
+
 import { Dispatch } from 'redux';
-import * as actions from 'data/store/reducers/user/actions'
+import * as asyncActions from 'data/store/reducers/user/async-actions'
 import { UserActions } from 'data/store/reducers/user/types'
 import { connect } from 'react-redux';
 import { RootState } from 'data/store';
+import { CommunitiesActions } from 'data/store/reducers/communities/types'
+import * as communityAsyncActions from 'data/store/reducers/communities/async-actions'
+import communities from 'configs/communities'
 
-const mapDispatcherToProps = (dispatch: Dispatch<UserActions>) => {
+
+const mapDispatcherToProps = (dispatch: Dispatch<UserActions | CommunitiesActions> ) => {
   return {
-      setAddress: (address: string) => dispatch(actions.setAddress(address)),
-      setProvider: (provider: any) => dispatch(actions.setProvider(provider)),
-      setChainId: (chainId: number) => dispatch(actions.setChainId(chainId))
+    connectWallet: () => asyncActions.connectWallet(dispatch),
+    getCommunityData: (communities: string[]) => communityAsyncActions.getCommunityData(dispatch, communities)
   }
 }
-const mapStateToProps = ({ user: { provider } }: RootState) => ({ provider })
 
+const mapStateToProps = ({ user: { provider, address } }: RootState) => ({ provider, address })
 type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps>
 
-const AppRouter: FC<ReduxType> = ({ setAddress, setProvider, setChainId, provider }) => {
+const AppRouter: FC<ReduxType> = ({ address, connectWallet, getCommunityData }) => {
   useEffect(() => {
-    async function defineProvider () {
-      const providerOptions = {
-        /* See Provider Options Section */
-      };
-      const web3Modal = new Web3Modal({
-        network: "rinkeby", // optional
-        cacheProvider: true, // optional
-        providerOptions // required
-      })
-      const provider = await web3Modal.connect();
-      const providerWeb3 = new Web3Provider(provider)
-      
-      const { chainId } = await providerWeb3.getNetwork()
-      const accounts = await providerWeb3.listAccounts()
-      setProvider(providerWeb3)
-      setAddress(accounts[0])
-      setChainId(chainId)
-    }
-    
-    if (provider) { return }
-    defineProvider()
+    getCommunityData(communities)
   }, [])
-
-  
-
-  if (!provider) {
-    return <>Loading</>
-  }
 
   return <HashRouter>
     <Page>
       <Switch>
-        <Route path='/retroactive-drops/create' render={props => <RetroactiveDropsCreate
+
+        <ProtectedRoute
+          path='/campaigns/new'
+          exact={true}
+          loggedIn={Boolean(address)}
+          component={CampaignsCreate}
+        />
+        <ProtectedRoute
+          path='/campaigns/:id'
+          exact={true}
+          loggedIn={Boolean(address)}
+          component={CampaignsDetails}
+        />
+        <Route path='/' exact={true} render={props => <Campaigns
+          connectWallet={connectWallet}
           {...props}
         />} />
-        <Route path='/retroactive-drops' render={props => <RetroactiveDrops
-          {...props}
-        />} />
-        <Route path='*' render={props => <Main
+        <Route path='*' exact={true} render={props => <NotFound
           {...props}
         />} />
       </Switch>

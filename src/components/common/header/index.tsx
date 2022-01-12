@@ -3,42 +3,66 @@ import {
     Header,
     HeaderTitle,
     HeaderInfo,
-    HeaderMode,
-    HeaderNetwork,
-    HeaderAccount,
-    HeaderNetworkIcon
-} from './styled-components'
+    HeaderUseInfo,
+		HeaderMenu,
+		HeaderMenuItem,
+		HeaderMenuItemActiveClass,
+		HeaderLogoLink,
+		ConnectionIndicator
+		// @ts-ignore
+} from './styled-components.tsx'
+import { Dispatch } from 'redux';
+
 import { ThemeProvider } from 'styled-components'
 import themes from 'themes'
 import Icons from 'icons'
 import { shortenString, defineNetworkName, capitalize } from 'helpers'
 import { RootState } from 'data/store';
 import { connect } from 'react-redux';
+import * as asyncUserActions from 'data/store/reducers/user/async-actions'
+import { UserActions } from 'data/store/reducers/user/types'
 
 const mapStateToProps = ({ user: { chainId, address } }: RootState) => ({ chainId, address })
-type ReduxType = ReturnType<typeof mapStateToProps>
 
-interface Props {
-  title: string,
+const mapDispatcherToProps = (dispatch: Dispatch<UserActions>) => {
+  return {
+    connectWallet: () => asyncUserActions.connectWallet(dispatch)
+  }
 }
 
-const HeaderComponent: FC<Props & ReduxType> = ({ title, chainId, address }) => {
-	console.log({ address })
+type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps>
+
+interface Props {}
+
+const HeaderComponent: FC<Props & ReduxType> = ({ chainId, address, connectWallet }) => {
 	return <ThemeProvider theme={themes.light}>
 			<Header>
-					<HeaderTitle>{title}</HeaderTitle>
-					<HeaderInfo>
-							<HeaderMode>Light Mode</HeaderMode>
-							<HeaderNetwork>
-									{capitalize(defineNetworkName(chainId))} <HeaderAccount>{shortenString(address)}</HeaderAccount>
-									<HeaderNetworkIcon>
-											<Icons.EthereumLogo />
-									</HeaderNetworkIcon>
-							</HeaderNetwork>
-					</HeaderInfo>
+				<HeaderTitle>
+					<HeaderLogoLink to='/'><Icons.LinkdropLogo />DropList</HeaderLogoLink>
+				</HeaderTitle>
+				<HeaderMenu>
+					<HeaderMenuItem
+						to='/'
+						activeClassName={HeaderMenuItemActiveClass}
+					>
+						My campaigns
+					</HeaderMenuItem>
+				</HeaderMenu>
+				<HeaderInfo>
+					{chainId && <HeaderUseInfo>
+						{capitalize(defineNetworkName(chainId))}
+					</HeaderUseInfo>}
+					{address && <HeaderUseInfo>
+						<ConnectionIndicator />
+						{shortenString(address)}
+					</HeaderUseInfo>}
+					{!address && <HeaderUseInfo onClick={connectWallet}>
+						Connect
+					</HeaderUseInfo>}
+				</HeaderInfo>
 			</Header>
 	</ThemeProvider>
 }
 
 
-export default connect(mapStateToProps)(HeaderComponent)
+export default connect(mapStateToProps, mapDispatcherToProps)(HeaderComponent)

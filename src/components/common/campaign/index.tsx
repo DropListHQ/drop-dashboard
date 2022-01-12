@@ -1,90 +1,45 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
+import { Campaign, CampaignStatus, CampaignTitle, CampaignImage, CampaignButton } from './styled-components'
+import { copyToClipboard } from 'helpers'
+import { useHistory } from 'react-router-dom'
 
-import {
-    Campaign,
-    CampaignSubtitle,
-    CampaignTitle,
-    CampaignDescription,
-    Buttons,
-    ButtonComponent
-} from './styled-components'
-
-import { ThemeProvider } from 'styled-components'
-import themes from 'themes'
+const { REACT_APP_CLAIM_URL } = process.env
 
 
-interface Props {
-    title: string,
-    type: 'draft' | 'new' | 'current' | 'finished',
-    chainId: number,
-    subtitle?: string,
-    buttonTitle: string,
-    description?: string,
-    total?: number,
-    claimed?: number,
-    action: () => void,
-    secondaryAction?: () => void,
-    secondaryButtonTitle?: string
+
+type TProps = {
+  status: 'active' | 'stopped' | 'draft',
+  title: string,
+  image: string,
+  id: string
 }
 
-const CampaignComponent: FC<Props> = ({
-  type = 'new',
+const CampaignComponent: FC<TProps> = ({
   title,
-  chainId = 1,
-  buttonTitle = 'Create',
-  action = () => console.log('hello world!'),
-  secondaryAction,
-  subtitle,
-  description,
-  total,
-  claimed = '',
-  secondaryButtonTitle
+  image,
+  id,
+  status
 }) => {
-
-    const button = <ButtonComponent
-      title={buttonTitle}
-      size='small'
-      onClick={action}
+  const history = useHistory()
+  return <Campaign>
+    <CampaignStatus status={status}>{status}</CampaignStatus>
+    <CampaignImage src={image} />
+    <CampaignTitle>{title}</CampaignTitle>
+    <CampaignButton
+      onClick={() => {
+        history.push(`/campaigns/${id}`)
+        // window.open(`${REACT_APP_CLAIM_URL}/${id}`, '_blank')
+      }}
+      title="Campaign’s Details"
+      appearance='inverted'
     />
-  
-    const defineTemplate = (type: string) => {
-      switch(type) {
-        case 'draft':
-          return <>
-            <CampaignSubtitle>{subtitle}</CampaignSubtitle>
-            <CampaignTitle>{title}</CampaignTitle>
-            {description && <CampaignDescription>{description}</CampaignDescription>}
-            {button}
-          </>
-        case 'current':
-          return <>
-            {subtitle && <CampaignSubtitle>{subtitle}</CampaignSubtitle>}
-            <CampaignTitle>{title}</CampaignTitle>
-            {description && <CampaignDescription>{description}</CampaignDescription>}
-            <Buttons>
-              {secondaryAction && secondaryButtonTitle && <ButtonComponent
-                title={secondaryButtonTitle}
-                size='small'
-                appearance='inverted'
-                onClick={secondaryAction}
-              />}
-              {button}
-            </Buttons>
-          </>
-        default:
-          return <>
-            {subtitle && <CampaignSubtitle>{subtitle}</CampaignSubtitle>}
-            <CampaignTitle>{title}</CampaignTitle>
-            {description && <CampaignDescription>{description}</CampaignDescription>}
-            {button}
-          </>
-      }
-    }
-    return <ThemeProvider theme={themes.light}>
-        <Campaign>
-          {defineTemplate(type)}
-        </Campaign>
-    </ThemeProvider>
+    <CampaignButton
+      title='Share Link'
+      onClick={() => copyToClipboard({ value: `${REACT_APP_CLAIM_URL}/${id}` })}
+      appearance='inverted'
+    />
+      
+  </Campaign>
 }
 
 export default CampaignComponent

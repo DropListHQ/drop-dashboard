@@ -6,7 +6,7 @@ import { ContractActions } from './types';
 import { NewRetroDropActions } from '../new-retro-drop/types';
 import { DropsActions } from '../drops/types';
 import { ethers } from 'ethers';
-import { TMerkleTree } from 'types'
+import { TMerkleTree, TRecipientsData, TRetroDropType } from 'types'
 import { RetroDropContract, ERC1155Contract } from 'abi'
 
 const {
@@ -68,12 +68,15 @@ export async function approve(
 	address: string,
 	chainId: number,
 	description: string,
+	logoURL: string,
+	recipients: TRecipientsData,
+	type: TRetroDropType,
 	callback: () => void
 ) {
   dispatch(actionsContract.setLoading(true))
   const signer = await provider.getSigner()
 	const contractInstance = await new ethers.Contract(tokenAddress, ERC1155Contract, signer)
-	const approveData = await contractInstance.setApprovalForAll(dropAddress, true)
+	await contractInstance.setApprovalForAll(dropAddress, true)
 	const checkReceipt = async function (): Promise<boolean> {
 		return new Promise((resolve, reject) => {
 			const interval = setInterval(async function () {
@@ -88,7 +91,18 @@ export async function approve(
 	const approved = await checkReceipt()
 	if (approved) {
 		alert(`DONE: ${ipfsHash}`)
-		dispatch(actionsDrops.addNewRetroDrop({ title, ipfsHash , address, chainId, description }))
+		dispatch(actionsDrops.addNewRetroDrop({
+			title,
+			ipfsHash,
+			address,
+			chainId,
+			description,
+			logoURL,
+			status: 'active',
+			tokenAddress,
+			recipients,
+			type
+		}))
 		if (callback) { callback() }
 	}
 	

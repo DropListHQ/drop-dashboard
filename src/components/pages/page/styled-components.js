@@ -1,15 +1,14 @@
 import styled from 'styled-components';
 
 export const Page = styled.div`
-  display: flex;
   height: 100%;
   background-color: ${props => props.theme.primaryColor};
 `;
 
 
 export const MainContent = styled.div`
-	flex: 1;
-  
+  max-width: 980px;
+  margin: 0 auto;
 `;
 
 export const Content = styled.main`

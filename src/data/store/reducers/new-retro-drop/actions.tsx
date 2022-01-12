@@ -1,6 +1,6 @@
 import { action } from 'typesafe-actions';
 import { Constants } from './constants';
-import { TRetroDropStep } from 'types'
+import { TRetroDropStep, TRetroDropType } from 'types'
 
 export function setStep(step: TRetroDropStep) {
   return action(Constants.DROP_SET_STEP, {
@@ -53,5 +53,11 @@ export function setIPFS(ipfs: string) {
 export function setDropAddress(dropAddress: string) {
   return action(Constants.DROP_SET_DROP_ADDRESS, {
     dropAddress
+  })
+}
+
+export function setType(type: TRetroDropType) {
+  return action(Constants.DROP_SET_TYPE, {
+    type
   })
 }

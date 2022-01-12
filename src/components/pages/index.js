@@ -1,9 +1,9 @@
 // import NotFound from './not-found'
 import Page from './page/index.tsx'
-import Main from './main/index.tsx'
-import RetroactiveDrops from './retroactive-drops/index.tsx'
-import RetroactiveDropsCreate from './retroactive-drops-create/index.tsx'
-
+import NotFound from './not-found/index.tsx'
+import Campaigns from './campaigns/index.tsx'
+import CampaignsCreate from './campaigns-create/index.tsx'
+import CampaignsDetails from './campaigns-details/index.tsx'
 // import ProtectedRoute from './protected-route'
 // import Authorize from './authorize'
 // campaigns
@@ -12,9 +12,10 @@ import RetroactiveDropsCreate from './retroactive-drops-create/index.tsx'
 
 export {
   Page,
-  Main,
-  RetroactiveDrops,
-  RetroactiveDropsCreate
+  NotFound,
+  Campaigns,
+  CampaignsCreate,
+  CampaignsDetails
 //   ProtectedRoute,
 //   Authorize
 }

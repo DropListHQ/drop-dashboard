@@ -1,15 +1,12 @@
 import React, { FC } from 'react'
-import { WidgetComponent, WidgetTitle, WidgetSubtitle } from './styled-components'
+import { WidgetComponent } from './styled-components'
 
 interface Props {
-  title: string,
-  subtitle?: string
+  className?: string
 }
 
-const Widget: FC<Props> = ({ children, title, subtitle }) => {
-  return <WidgetComponent>
-    <WidgetTitle>{title}</WidgetTitle>
-    {subtitle && <WidgetSubtitle>{subtitle}</WidgetSubtitle>}
+const Widget: FC<Props> = ({ children, className }) => {
+  return <WidgetComponent className={className}>
     {children}
   </WidgetComponent>
 }

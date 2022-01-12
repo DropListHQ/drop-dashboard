@@ -4,13 +4,14 @@ import { Constants } from './constants';
 const initialState: NewRetroDropState = {
   title: '',
   merkleTree: null,
-  step: 'initialize',
+  step: 'choose_type',
   tokenAddress: '',
   logoURL: '',
   description: '',
   dropAddress: null,
   loading: false,
-  ipfs: null
+  ipfs: null,
+  type: null
 }
 
 export function newRetroDropReducer(
@@ -34,9 +35,11 @@ export function newRetroDropReducer(
           return {...state, loading: action.payload.loading }
         case Constants.DROP_SET_IPFS:
           return {...state, ipfs: action.payload.ipfs }
-          case Constants.DROP_SET_DROP_ADDRESS:
-            return {...state, dropAddress: action.payload.dropAddress }
-        default:
+        case Constants.DROP_SET_DROP_ADDRESS:
+          return {...state, dropAddress: action.payload.dropAddress }
+        case Constants.DROP_SET_TYPE:
+          return {...state, type: action.payload.type }
+          default:
             return state;
     }
 }
