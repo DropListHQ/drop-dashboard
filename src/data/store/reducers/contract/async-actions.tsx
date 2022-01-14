@@ -22,18 +22,22 @@ export async function createDrop(
 	ipfsHash: string
 ) {
   dispatch(actionsContract.setLoading(true))
-  const signer = await provider.getSigner()
+	const drop = await deploy(provider, merkleTree, tokenAddress, ipfsHash)
+	dispatch(actionsNewRetroDrop.setDropAddress(drop))
+	dispatch(actionsContract.setLoading(false))
+	dispatch(actionsNewRetroDrop.setStep('give_approval'))
+}
+
+const deploy = async (
+	provider: any,
+	merkleTree: TMerkleTree,
+	tokenAddress: string,
+	ipfsHash: string
+) => {
+	const signer = await provider.getSigner()
 	const ipfs = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(ipfsHash))
 	const proxyContract = await new ethers.Contract(REACT_APP_FACTORY_ADDRESS, RetroDropContract, signer)
-	console.log(
-		REACT_APP_TEMPLATE_ADDRESS,
-		tokenAddress,
-		merkleTree.merkleRoot,
-		Number(new Date()) / 1000,
-		ipfs,
-		ipfs
-	)
-  const result = await proxyContract.createDrop(
+  await proxyContract.createDrop(
 		REACT_APP_TEMPLATE_ADDRESS,
 		tokenAddress,
 		merkleTree.merkleRoot,
@@ -51,10 +55,7 @@ export async function createDrop(
 		 })
 		})
 	}
-	const drop = await checkReceipt()
-	dispatch(actionsNewRetroDrop.setDropAddress(drop))
-	dispatch(actionsContract.setLoading(false))
-	dispatch(actionsNewRetroDrop.setStep('give_approval'))
+	return await checkReceipt()
 }
 
 export async function approve(
