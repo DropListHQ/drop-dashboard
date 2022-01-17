@@ -30,6 +30,7 @@ type OldFormat = {
     maxSupply: number
   }
 }
+
 type NewFormat = {
   address: string;
   earnings: string;

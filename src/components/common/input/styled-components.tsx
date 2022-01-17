@@ -11,7 +11,6 @@ interface InputFieldProps {
 }
 
 interface InputTitleProps {
-  active: boolean
 }
 
 export const InputContainer = styled.div.attrs(props => ({
@@ -28,10 +27,6 @@ export const InputTitle = styled.h3<InputTitleProps>`
   line-height: 16px;
   margin-top: 0px;
   color: ${props => props.theme.primaryTextColor};
-
-  ${props => props.active && css`
-    color: ${props =>  props.theme.primaryHighlightColor}; 
-  `}
 `
 
 
@@ -51,10 +46,6 @@ export const InputField = styled.input<InputFieldProps>`
     border-color: ${props => props.theme.primaryHighlightColor};
     outline: none;
   }
-
-  ${props => props.value && props.value.length > 0 && css`
-    border-color: ${props => props.theme.primaryHighlightColor};
-  `}
 `
 
 export const InputError = styled.div`

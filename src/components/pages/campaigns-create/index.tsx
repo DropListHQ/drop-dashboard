@@ -1,6 +1,7 @@
 import { useState, FC, useEffect } from 'react'
 import {
   Widget,
+  PreviewWidget,
   DataBlock,
   Breadcrumbs
 } from 'components/common'
@@ -12,14 +13,25 @@ import {
   WidgetControls,
   WidgetButton,
   WidgetDataSplit,
-  WidgetDataBlock
+  WidgetDataBlock,
+  DoubleWidget,
+  Title,
+  Table,
+  TableItem,
+  TableWidget,
+  TableItemImage,
+  LinkAnchor
 } from './styled-compoents'
+import communities from 'configs/communities'
+import Icons from 'icons'
 
 import { TMerkleTree, TRetroDropStep, TRetroDropType, TRecipientsData } from 'types'
 import { RootState } from 'data/store';
 import * as newRetroDropAsyncActions from 'data/store/reducers/new-retro-drop/async-actions'
 import * as newRetroDropActions from 'data/store/reducers/new-retro-drop/actions'
 import * as newContractAsyncActions from 'data/store/reducers/contract/async-actions'
+import * as communitiesAsyncActions from 'data/store/reducers/communities/async-actions'
+
 import { ContractActions } from 'data/store/reducers/contract/types'
 import { NewRetroDropActions } from 'data/store/reducers/new-retro-drop/types'
 import { connect } from 'react-redux';
@@ -30,6 +42,7 @@ const mapStateToProps = ({
   user: { address, provider, chainId },
   contract: { loading: contractLoading },
   newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree, dropAddress, type },
+  communities: { communities }
 }: RootState) => ({
   loading,
   address,
@@ -41,14 +54,18 @@ const mapStateToProps = ({
   merkleTree,
   chainId,
   dropAddress,
-  type
+  type,
+  loadedCommunities: communities
 })
 
-
+interface INameToValueMap {
+  [key: string]: any;
+}
 
 const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions>) => {
   return {
       createIPFS: (data: any, title: string, description: string, logoURL: string, tokenAddress: string, chainId: number) => newRetroDropAsyncActions.createIPFS(dispatch, data, title, description, logoURL, tokenAddress, chainId),
+      getOwnersData: (contract: string) => communitiesAsyncActions.getOwnersData(dispatch, contract),
       createDrop: (
         provider: any,
         merkleTree: TMerkleTree,
@@ -120,7 +137,8 @@ const CampaignsCreate: FC<ReduxType> = ({
   loading,
   contractLoading,
   chainId,
-
+  loadedCommunities,
+  getOwnersData,
 
   createIPFS,
   ipfs,
@@ -205,70 +223,24 @@ const CampaignsCreate: FC<ReduxType> = ({
       case 'create_tree':
         return <>
           {bredcrumbs}
-          <Widget>
-            <WidgetTextarea
-              title='Receiver address, token ID, amount, max supply'
-              onChange={value => { setRecipientsValue(value); return value}}
-              value={recipientsValue}
-              placeholder={`Be careful and paste here info in the following order:
-
-Receiver address, token ID, amount, max supply
-
-Max supply — maximum amount of tokens that you would like to distribute. Max supply value should be equal for lines with an equal token ID
-
-0x70dfbd1149250eddeae6ed2381993b517a1c9ce8, 1, 1, 3
-0x203477162865dd22488a60e3e478e7795af95052, 2, 1, 1
-0x2693ad693d042b9c04d2dce0a44a7608ea1f7d47, 1, 2, 3
-
-and so on
-              `}
-            />
-            <WidgetControls>
-              <WidgetButton
-                title='Start over'
-                appearance='inverted'
-                onClick={cancel}
-              />
-              <WidgetButton
-                title='Parse data'
-                disabled={!recipientsValue}
-                onClick={() => {
-                  // if (!type) return
-                  const type = 'erc1155'
-                  const recipientsData = parseRecipientsData(type, recipientsValue)
-                  console.log({ recipientsData })
-                  if (!recipientsData) {
-                    return alert('Please check format for ERC1155')
-                  }
-                  setRecipients(recipientsData)
-                  const merkleData = parseBalanceMap(recipientsData)
-                  setMerkleTree(merkleData)
-                  setStep('publish_ipfs')
-                }}
-              />
-            </WidgetControls>
-          </Widget>
-        </>
-        case 'publish_ipfs':
-          return <>
-            {bredcrumbs}
+          <DoubleWidget>
             <Widget>
-              <WidgetInput
-                title='Enter title here'
-                onChange={value => { setDropTitle(value); return value}}
-                value={dropTitle}
-              />
-              <WidgetInput
-                title='Logo URL'
-                onChange={value => { setDropLogoURL(value); return value}}
-                value={dropLogoURL}
-                placeholder='https://'
-              />
               <WidgetTextarea
-                title='Description'
-                onChange={value => { setDropDescription(value); return value}}
-                value={dropDescription}
-                placeholder='Enter description here'
+                title='Receiver address, token ID, amount, max supply'
+                onChange={value => { setRecipientsValue(value); return value}}
+                value={recipientsValue}
+                placeholder={`Be careful and paste here info in the following order:
+
+  Receiver address, token ID, amount, max supply
+
+  Max supply — maximum amount of tokens that you would like to distribute. Max supply value should be equal for lines with an equal token ID
+
+  0x70dfbd1149250eddeae6ed2381993b517a1c9ce8, 1, 1, 3
+  0x203477162865dd22488a60e3e478e7795af95052, 2, 1, 1
+  0x2693ad693d042b9c04d2dce0a44a7608ea1f7d47, 1, 2, 3
+
+  and so on
+                `}
               />
               <WidgetControls>
                 <WidgetButton
@@ -277,17 +249,93 @@ and so on
                   onClick={cancel}
                 />
                 <WidgetButton
-                  title='Publish'
-                  loading={loading}
-                  appearance={loading ? 'gradient' : undefined}
-                  disabled={!dropTitle || !tokenAddress}
+                  title='Parse data'
+                  disabled={!recipientsValue}
                   onClick={() => {
-                    if (!tokenAddress || !chainId) { return }
-                    createIPFS(merkleTree, dropTitle, dropDescription, dropLogoURL, tokenAddress, chainId)
+                    // if (!type) return
+                    const type = 'erc1155'
+                    const recipientsData = parseRecipientsData(type, recipientsValue)
+                    console.log({ recipientsData })
+                    if (!recipientsData) {
+                      return alert('Please check format for ERC1155')
+                    }
+                    setRecipients(recipientsData)
+                    const merkleData = parseBalanceMap(recipientsData)
+                    setMerkleTree(merkleData)
+                    setStep('publish_ipfs')
                   }}
                 />
               </WidgetControls>
             </Widget>
+            <TableWidget>
+              <Title>Selected Communities</Title>
+              <Table>
+                {loadedCommunities.map((item: INameToValueMap) => {
+                  const image = communities[item.id]
+                  return <>
+                    <TableItem>
+                      <TableItemImage src={image.logo} alt={item.name} />
+                      {item.name}
+                    </TableItem>
+                    <TableItem onClick={_ => {
+                      getOwnersData(item.id)
+                    }}>
+                      Download CSV <Icons.DownloadIcon />
+                    </TableItem>
+                  </>
+                })}
+              </Table>
+              <LinkAnchor to='/communities'>See the full list of communities <Icons.GoBackIcon /></LinkAnchor>
+            </TableWidget>
+          </DoubleWidget>
+        </>
+        case 'publish_ipfs':
+          return <>
+            {bredcrumbs}
+            <DoubleWidget>
+              <Widget>
+                <WidgetInput
+                  title='Enter title here'
+                  onChange={value => { setDropTitle(value); return value}}
+                  value={dropTitle}
+                />
+                <WidgetInput
+                  title='Logo URL'
+                  onChange={value => { setDropLogoURL(value); return value}}
+                  value={dropLogoURL}
+                  placeholder='https://'
+                />
+                <WidgetTextarea
+                  title='Description'
+                  onChange={value => { setDropDescription(value); return value}}
+                  value={dropDescription}
+                  limit={120}
+                  placeholder='Enter description here'
+                />
+                <WidgetControls>
+                  <WidgetButton
+                    title='Start over'
+                    appearance='inverted'
+                    onClick={cancel}
+                  />
+                  <WidgetButton
+                    title='Publish'
+                    loading={loading}
+                    appearance={loading ? 'gradient' : undefined}
+                    disabled={!dropTitle || !tokenAddress}
+                    onClick={() => {
+                      if (!tokenAddress || !chainId) { return }
+                      createIPFS(merkleTree, dropTitle, dropDescription, dropLogoURL, tokenAddress, chainId)
+                    }}
+                  />
+                </WidgetControls>
+              </Widget>
+              <PreviewWidget
+                title={dropTitle}
+                description={dropDescription}
+                image={dropLogoURL}
+              />
+            </DoubleWidget>
           </>
         case 'deploy_contract':
           return <>
