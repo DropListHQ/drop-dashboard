@@ -1,5 +1,5 @@
-import React, { FC } from 'react'
-import { Title, CommunityWidget } from 'components/common'
+import { FC, useState } from 'react'
+import { Title, CommunityWidget, Input } from 'components/common'
 import { CommunitiesContainer } from './styled-components'
 import { RootState } from 'data/store';
 import { connect } from 'react-redux';
@@ -31,12 +31,20 @@ const mapDispatcherToProps = (dispatch: Dispatch<CommunitiesActions>) => {
 type ReduxType = ReturnType<typeof mapStateToProps>  & ReturnType<typeof mapDispatcherToProps>
 
 const Communities: FC<ReduxType & TProps> = ({ address, connectWallet, communities, getOwnersData }) => {
+  const [ value, setValue ] = useState('')
+  const communitiesToShow = value ? communities.filter(item => {
+    if (item.name && item.name.includes(value.toLowerCase())) {
+      return true
+    }
+    return false
+  }) : communities
   return <div>
     <Container>
       <Title>Selected communities</Title>
       <Text>Select the community you would like to target.</Text>
+      <Input placeholder='Search or paste address of NFT' value={value} onChange={value => { setValue(value); return value } }/>
       <CommunitiesContainer>
-        {communities.map(item => <CommunityWidget
+        {communitiesToShow.map(item => <CommunityWidget
           title={item.name || 'Loading'}
           key={item.id}
           description={`${item.numOwners} holders`}

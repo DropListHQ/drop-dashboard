@@ -16,6 +16,7 @@ import Title from './title'
 import Campaign from './campaign'
 import Breadcrumbs from './breadcrumbs'
 import InfoBlock from './info-block'
+import PreviewWidget from './preview-widget'
 
 export {
   Header,
@@ -35,5 +36,6 @@ export {
   Footer,
   Campaign,
   Breadcrumbs,
-  InfoBlock
+  InfoBlock,
+  PreviewWidget
 }

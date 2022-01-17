@@ -17,7 +17,7 @@ type TProps = {
 }
 
 interface INameToValueMap {
-    [key: string]: any;
+  [key: string]: any;
 }
 
 const mapStateToProps = ({

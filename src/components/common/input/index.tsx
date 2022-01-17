@@ -42,7 +42,7 @@ const InputComponent: FC<Props> = ({
           error={error}
           className={className}
         >
-          <InputTitle active={value.length > 0}>{title}</InputTitle>
+          <InputTitle>{title}</InputTitle>
           <InputField
             onChange={(evt) => onChange(evt.target.value)}
             type={type}

@@ -4,7 +4,9 @@ import {
     TextareaContainer,
     TextareaField,
     TextareaTitle,
-    TextareaError
+    TextareaError,
+    TextareaFieldContainer,
+    TextareaFieldLimit
 } from './styled-components'
 
 import { ThemeProvider } from 'styled-components'
@@ -20,7 +22,8 @@ interface Props {
   onChange: (value: string) => string,
   error?: string,
   value: string,
-  className?: string
+  className?: string,
+  limit?: number 
 }
 
 const TextareaComponent: FC<Props> = ({
@@ -30,8 +33,11 @@ const TextareaComponent: FC<Props> = ({
   onChange,
   error,
   value = '',
-  className
+  className,
+  limit
 }) => {
+
+  const limitContainer = limit ? <TextareaFieldLimit>{value.length || 0}/{limit}</TextareaFieldLimit> : null
     return <ThemeProvider theme={themes.light}>
         <TextareaContainer
           disabled={disabled}
@@ -39,12 +45,24 @@ const TextareaComponent: FC<Props> = ({
           className={className}
         >
           <TextareaTitle>{title}</TextareaTitle>
-          <TextareaField
-            onChange={(evt) => onChange(evt.target.value)}
-            disabled={disabled}
-            placeholder={placeholder}
-            value={value}
-          />
+          <TextareaFieldContainer>
+            <TextareaField
+              onChange={(evt) => {
+                if (limit && limit > 0) {
+                  if (Number(evt.target.value.length) > limit) {
+                    return
+                  }
+                }
+                onChange(evt.target.value)
+              }}
+              disabled={disabled}
+              placeholder={placeholder}
+              value={value}
+              limit={limit}
+            />
+            {limitContainer}
+          </TextareaFieldContainer>
+          
         </TextareaContainer>
         {error && <TextareaError>{error}</TextareaError>}
     </ThemeProvider>
