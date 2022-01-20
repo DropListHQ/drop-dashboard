@@ -1,45 +1,22 @@
 import { BigNumber, utils } from 'ethers'
 import BalanceTree from './balance-tree'
 
+import { TItemERC20, MerkleDistributorInfoERC20 } from 'types'
+
 const { isAddress, getAddress } = utils
 
 // This is the blob that gets distributed and pinned to IPFS.
 // It is completely sufficient for recreating the entire merkle tree.
 // Anyone can verify that all air drops are included in the tree,
 // and the tree has no additional distributions.
-interface MerkleDistributorInfo {
-  merkleRoot: string
-  tokenTotal: string
-  creationTime: string | number
-  claims: {
-    [account: string]: {
-      index: number
-      amount: string
-      proof: string[]
-      flags?: {
-        [flag: string]: boolean
-      }
-    }
-  }
-}
-
-type OldFormat = {
-  [account: string]: {
-    amount: number | string,
-    tokenId: number | string,
-    maxSupply: number
-  }
-}
 
 type NewFormat = {
   address: string;
   earnings: string;
   reasons: string;
-  tokenId: number | string;
-  maxSupply: string
 }
 
-export default function parseBalanceMap(balances: OldFormat | NewFormat[]): MerkleDistributorInfo {
+export default function parseBalanceMapERC1155(balances: TItemERC20 | NewFormat[]): MerkleDistributorInfoERC20 {
   // if balances are in an old format, process them
   const balancesInNewFormat: NewFormat[] = Array.isArray(balances)
     ? balances
@@ -47,17 +24,13 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
         (account): NewFormat => ({
           address: account,
           earnings: `0x${balances[account].amount.toString(16)}`,
-          reasons: '',
-          tokenId: balances[account].tokenId,
-          maxSupply: `0x${balances[account].maxSupply.toString(16)}`
+          reasons: ''
         })
       )
 
   const dataByAddress = balancesInNewFormat.reduce<{
     [address: string]: {
       amount: BigNumber;
-      tokenId: number | string,
-      maxSupply: BigNumber,
       flags?: {
         [flag: string]: boolean
       }
@@ -65,9 +38,7 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
   }>((memo, {
     address: account,
     earnings,
-    reasons,
-    tokenId,
-    maxSupply
+    reasons
   }) => {
     if (!isAddress(account)) {
       throw new Error(`Found invalid address: ${account}`)
@@ -75,7 +46,6 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
     const parsed = getAddress(account)
     if (memo[parsed]) throw new Error(`Duplicate address: ${parsed}`)
     const parsedNum = BigNumber.from(earnings)
-    const parsedMaxSupply = BigNumber.from(maxSupply)
     if (parsedNum.lte(0)) throw new Error(`Invalid amount for account: ${account}`)
 
     const flags = {
@@ -86,8 +56,6 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
 
     memo[parsed] = {
       amount: parsedNum,
-      maxSupply: parsedMaxSupply,
-      tokenId,
       ...(reasons === '' ? {} : { flags })
     }
     return memo
@@ -100,9 +68,7 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
     sortedAddresses.map((address) => {
       return {
         account: address,
-        amount: dataByAddress[address].amount,
-        tokenId: dataByAddress[address].tokenId,
-        maxSupply: dataByAddress[address].maxSupply
+        amount: dataByAddress[address].amount
       }
     })
   )
@@ -112,25 +78,19 @@ export default function parseBalanceMap(balances: OldFormat | NewFormat[]): Merk
       amount: string;
       index: number;
       proof: string[];
-      tokenId: number | string,
-      maxSupply: string | number,
       flags?: {
         [flag: string]: boolean
       }
     }
   }>((memo, address, index) => {
-    const { amount, flags, tokenId, maxSupply } = dataByAddress[address]
+    const { amount, flags } = dataByAddress[address]
     memo[address] = {
       index,
       amount: amount.toHexString(),
-      tokenId,
-      maxSupply: maxSupply.toHexString(),
       proof: tree.getProof(
         index,
         address,
-        amount,
-        tokenId,
-        maxSupply
+        amount
       ),
       ...(flags ? { flags } : {}),
     }

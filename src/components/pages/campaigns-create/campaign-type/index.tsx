@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { Container } from './styled-components'
 import { TRetroDropType } from 'types'
 
- 
 const mapStateToProps = ({
   drops: { retroDrops },
   user: { address }
@@ -31,6 +30,24 @@ const RetroactiveDrops: FC<ReduxType & TProps> = ({ onTypeChoose }) => {
         buttonTitle='Continue'
         action={() => {
           onTypeChoose('erc1155')
+        }}
+      />
+      <MiniWidget
+        title='ERC721'
+        subtitle='ethereum'
+        description='Make a retrodrop to major crypto communities and collectors'
+        buttonTitle='Continue'
+        action={() => {
+          onTypeChoose('erc721')
+        }}
+      />
+      <MiniWidget
+        title='ERC20'
+        subtitle='ethereum'
+        description='Make a retrodrop to major crypto communities and collectors'
+        buttonTitle='Continue'
+        action={() => {
+          onTypeChoose('erc20')
         }}
       />
     </Container>

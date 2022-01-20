@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import { FC } from 'react'
 import { Breadcrumbs, Button, DataBlock } from 'components/common'
 // import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from 'data/store';
@@ -14,7 +14,6 @@ const { REACT_APP_CLAIM_URL } = process.env
 type TReduceTokens = {
   [tokenId: string]: number
 }
-
 
 interface MatchParams {
   id: string;
@@ -48,10 +47,7 @@ const CampaignDetails: FC<ReduxType & IProps & RouteComponentProps> = (props) =>
   const link = `${REACT_APP_CLAIM_URL}/${ipfsHash}`
   
   const tokens = recipients && Object.values(recipients).reduce<TReduceTokens>((sum, item) => {
-    if (sum[String(item.tokenId)]) {
-     return sum
-    }
-    sum[item.tokenId] = item.maxSupply
+    sum[item.tokenId] = (sum[item.tokenId] || 0) + Number(item.amount)
     return sum
   }, {})
 
