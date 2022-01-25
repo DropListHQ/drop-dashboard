@@ -11,11 +11,8 @@ import { ERC1155Contract } from 'abi'
 import contracts from 'configs/contracts'
 import { DropFactoryInterface } from '@drop-protocol/drop-sdk'
 import { hexlifyIpfsHash } from 'helpers'
-function addDays(date: number, days: number) {
-  var result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
-}
+
+const DECEMBER_31_2325 = 11234234223 // Thursday, December 31, 2325 8:37:03 PM
 
 export async function createDrop(
 	dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions>,
@@ -56,7 +53,7 @@ const deployERC1155 = async (
 		templateAddress,
 		tokenAddress,
 		merkleTree.merkleRoot,
-		+addDays(+(new Date()), 7),
+		DECEMBER_31_2325,
 		ipfsHexlified
 	)
 	
