@@ -27,18 +27,14 @@ export async function createDrop(
 	const contractData = contracts[chainId]
 	const factoryAddress = contractData.factory
 	const templateAddress = contractData[type]
-	let drop
-	if (type === 'erc1155') {
-		drop = await deployERC1155(provider, merkleTree, tokenAddress, ipfsHash, factoryAddress, templateAddress)
-	} else {
-		drop = await deployERC1155(provider, merkleTree, tokenAddress, ipfsHash, factoryAddress, templateAddress)
-	}
+	let drop = await deployContract(provider, merkleTree, tokenAddress, ipfsHash, factoryAddress, templateAddress)
 	dispatch(actionsNewRetroDrop.setDropAddress(drop))
 	dispatch(actionsContract.setLoading(false))
 	dispatch(actionsNewRetroDrop.setStep('give_approval'))
 }
 
-const deployERC1155 = async (
+
+const deployContract = async (
 	provider: any,
 	merkleTree: TMerkleTree,
 	tokenAddress: string,

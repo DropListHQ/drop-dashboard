@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import {
   WidgetTextarea,
   WidgetControls,
@@ -39,8 +39,6 @@ interface INameToValueMap {
 }
 
 type TProps = {
-  recipientsValue: string,
-  setRecipientsValue: (value: string) => void,
   setRecipients: (value: TRecipientsData) => void,
   cancel: () => void
 }
@@ -101,9 +99,22 @@ const defineTreePlaceholder = (type: TRetroDropType | null) : string => {
   }
 }
 
+type TCreateDefaultRecipientsValue = (dropType: TRetroDropType | null) => string
+
+const createDefaultRecipientsValue: TCreateDefaultRecipientsValue = (type) => {
+  switch (type) {
+    case 'erc1155':
+      return '0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 4, 2'
+    case 'erc721':
+      return '0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 4'
+    case 'erc20':
+      return '0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 2'
+    default:
+      return ''
+  }
+}
+
 const CampaignTree: FC<ReduxType> = ({
-  recipientsValue,
-  setRecipientsValue,
   cancel,
   setMerkleTree,
   setStep,
@@ -112,6 +123,8 @@ const CampaignTree: FC<ReduxType> = ({
   getOwnersData,
   type
 }) => {
+
+  const [ recipientsValue, setRecipientsValue ] = useState(createDefaultRecipientsValue(type))
 
   const createTree = (type: TRetroDropType, recipientsValue: string): boolean => {
     let recipientsData
@@ -145,8 +158,6 @@ const CampaignTree: FC<ReduxType> = ({
       setMerkleTree(merkleData)
       return true
     }
-
-    
     return false
   }
 

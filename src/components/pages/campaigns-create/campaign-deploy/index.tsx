@@ -80,20 +80,20 @@ const CampaignDeploy: FC<ReduxType> = ({
         title='Network'
         text={capitalize(defineNetworkName(chainId))}
       />
-      <WidgetDataBlock
+      {type && <WidgetDataBlock
         title='Type of token'
-        text='ERC1155'
-      />
+        text={type}
+      />}
     </WidgetDataSplit>
     <DataBlock
       title='Token Address'
       text={tokenAddress || ''}
     />
     <WidgetDataSplit>
-      <WidgetDataBlock
+      {type !== 'erc721' && <WidgetDataBlock
         title='Total NFTs dropped'
         text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
-      />
+      />}
       <WidgetDataBlock
         title='Recipients'
         text={recipients ? Object.keys(recipients).length : 0}
