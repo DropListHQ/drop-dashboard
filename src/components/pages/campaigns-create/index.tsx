@@ -1,111 +1,33 @@
 import { useState, FC, useEffect } from 'react'
 import {
-  Widget,
-  PreviewWidget,
-  DataBlock,
   Breadcrumbs
 } from 'components/common'
-import { parseRecipientsData, parseBalanceMap, defineNetworkName, capitalize } from 'helpers'
-import { useHistory } from 'react-router-dom'
-import {
-  WidgetInput,
-  WidgetTextarea,
-  WidgetControls,
-  WidgetButton,
-  WidgetDataSplit,
-  WidgetDataBlock,
-  DoubleWidget,
-  Title,
-  Table,
-  TableItem,
-  TableWidget,
-  TableItemImage,
-  LinkAnchor
-} from './styled-compoents'
-import communities from 'configs/communities'
-import Icons from 'icons'
 
-import { TMerkleTree, TRetroDropStep, TRetroDropType, TRecipientsData } from 'types'
+import { TRetroDropStep, TRetroDropType, TRecipientsData } from 'types'
 import { RootState } from 'data/store';
-import * as newRetroDropAsyncActions from 'data/store/reducers/new-retro-drop/async-actions'
 import * as newRetroDropActions from 'data/store/reducers/new-retro-drop/actions'
-import * as newContractAsyncActions from 'data/store/reducers/contract/async-actions'
-import * as communitiesAsyncActions from 'data/store/reducers/communities/async-actions'
 
-import { ContractActions } from 'data/store/reducers/contract/types'
 import { NewRetroDropActions } from 'data/store/reducers/new-retro-drop/types'
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+
 import CampaignType from './campaign-type'
+import CampaignInfo from './campaign-info'
+import CampaignInitial from './campaign-initial'
+import CampaignTree from './campaign-tree'
+import CampaignDeploy from './campaign-deploy'
+import CampaignApproval from './campaign-approval'
 
 const mapStateToProps = ({
-  user: { address, provider, chainId },
-  contract: { loading: contractLoading },
-  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree, dropAddress, type },
-  communities: { communities }
+  newRetroDrop: { step },
 }: RootState) => ({
-  loading,
-  address,
-  contractLoading,
-  provider,
-  ipfs,
-  step,
-  tokenAddress,
-  merkleTree,
-  chainId,
-  dropAddress,
-  type,
-  loadedCommunities: communities
+  step
 })
 
-interface INameToValueMap {
-  [key: string]: any;
-}
-
-const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions>) => {
+const mapDispatcherToProps = (dispatch: Dispatch<NewRetroDropActions>) => {
   return {
-      createIPFS: (data: any, title: string, description: string, logoURL: string, tokenAddress: string, chainId: number) => newRetroDropAsyncActions.createIPFS(dispatch, data, title, description, logoURL, tokenAddress, chainId),
-      getOwnersData: (contract: string) => communitiesAsyncActions.getOwnersData(dispatch, contract),
-      createDrop: (
-        provider: any,
-        merkleTree: TMerkleTree,
-        tokenAddress: string,
-        ipfsHash: string
-      ) => newContractAsyncActions.createDrop(dispatch, provider, merkleTree, tokenAddress, ipfsHash),
-      approve: (
-        provider: any,
-        tokenAddress: string,
-        userAddress: string,
-        dropAddress: string,
-        ipfsHash: string,
-        title: string,
-        address: string,
-        chainId: number,
-        description: string,
-        dropLogoURL: string,
-        recipientsData: TRecipientsData,
-        type: TRetroDropType,
-        callback: () => void
-      ) => newContractAsyncActions.approve(
-        dispatch,
-        provider,
-        tokenAddress,
-        userAddress,
-        dropAddress,
-        ipfsHash,
-        title,
-        address,
-        chainId,
-        description,
-        dropLogoURL,
-        recipientsData,
-        type,
-        callback
-      ),
       setStep: (step: TRetroDropStep) => dispatch(newRetroDropActions.setStep(step)),
-      setType: (type: TRetroDropType) => dispatch(newRetroDropActions.setType(type)),
-      setTokenAddress: (tokenAddress: string) => dispatch(newRetroDropActions.setTokenAddress(tokenAddress)),
-      setMerkleTree: (merkleTree: any) => dispatch(newRetroDropActions.setMerkleTree(merkleTree)),
+      setType: (type: TRetroDropType) => dispatch(newRetroDropActions.setType(type))
   }
 }
 
@@ -132,43 +54,19 @@ const defineTitie = (step: TRetroDropStep): string => {
 }
 
 const CampaignsCreate: FC<ReduxType> = ({
-  address,
-  provider,
-  loading,
-  contractLoading,
-  chainId,
-  loadedCommunities,
-  getOwnersData,
-
-  createIPFS,
-  ipfs,
-
   setStep,
   step,
-
   setType,
-  type,
-
-  setTokenAddress,
-  tokenAddress,
-
-  merkleTree,
-  setMerkleTree,
-
-  dropAddress,
-
-  createDrop,
-  approve
 }) => {
   const [ currentTokenAddress, setCurrentTokenAddress ] = useState('0x35573543F290fef43d62Ad3269BB9a733445ddab')
-  const [ recipientsValue, setRecipientsValue ] = useState('0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 4, 2, 2')
+  const [ recipientsValue, setRecipientsValue ] = useState('0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 4, 2')
   const [ recipients, setRecipients ] = useState<TRecipientsData>({})
   const [ dropTitle, setDropTitle ] = useState('Test Drop')
-  const [ dropLogoURL, setDropLogoURL ] = useState('https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Anarchist_logo.svg/1079px-Anarchist_logo.svg.png')
+  const [ dropLogoURL, setDropLogoURL ] = useState('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvPS5Lb__A7MNVvat4rHsOWcWQ7yQIF_FIkw&usqp=CAU')
   const [ dropDescription, setDropDescription ] = useState('Test')
 
   const cancel = () => setStep('choose_type')
-  const history = useHistory()
+  
   const onTypeChoose:onTypeChoose = type => {
     setType(type)
     setStep('initialize')
@@ -196,272 +94,60 @@ const CampaignsCreate: FC<ReduxType> = ({
       case 'initialize':
         return <>
           {bredcrumbs}
-          <Widget>
-            <WidgetInput
-              title='Token’s address'
-              onChange={value => { setCurrentTokenAddress(value); return value}}
-              value={currentTokenAddress}
-            />
-            <WidgetControls>
-              <WidgetButton
-                title='Cancel'
-                appearance='inverted'
-                onClick={cancel}
-              />
-              <WidgetButton
-                title='Continue'
-                disabled={currentTokenAddress.length !== 42}
-                onClick={() => {
-                  setTokenAddress(currentTokenAddress)
-                  setStep('create_tree')
-                }}
-              />
-            </WidgetControls>
-          </Widget>
+          <CampaignInitial
+            currentTokenAddress={currentTokenAddress}
+            dropLogoURL={dropLogoURL}
+            dropDescription={dropDescription}
+            setCurrentTokenAddress={setCurrentTokenAddress}
+            cancel={cancel}
+          />
         </>
 
       case 'create_tree':
         return <>
           {bredcrumbs}
-          <DoubleWidget>
-            <Widget>
-              <WidgetTextarea
-                title='Receiver address, token ID, amount, max supply'
-                onChange={value => { setRecipientsValue(value); return value}}
-                value={recipientsValue}
-                placeholder={`Be careful and paste here info in the following order:
-
-  Receiver address, token ID, amount, max supply
-
-  Max supply — maximum amount of tokens that you would like to distribute. Max supply value should be equal for lines with an equal token ID
-
-  0x70dfbd1149250eddeae6ed2381993b517a1c9ce8, 1, 1, 3
-  0x203477162865dd22488a60e3e478e7795af95052, 2, 1, 1
-  0x2693ad693d042b9c04d2dce0a44a7608ea1f7d47, 1, 2, 3
-
-  and so on
-                `}
-              />
-              <WidgetControls>
-                <WidgetButton
-                  title='Start over'
-                  appearance='inverted'
-                  onClick={cancel}
-                />
-                <WidgetButton
-                  title='Parse data'
-                  disabled={!recipientsValue}
-                  onClick={() => {
-                    // if (!type) return
-                    const type = 'erc1155'
-                    const recipientsData = parseRecipientsData(type, recipientsValue)
-                    console.log({ recipientsData })
-                    if (!recipientsData) {
-                      return alert('Please check format for ERC1155')
-                    }
-                    setRecipients(recipientsData)
-                    const merkleData = parseBalanceMap(recipientsData)
-                    setMerkleTree(merkleData)
-                    setStep('publish_ipfs')
-                  }}
-                />
-              </WidgetControls>
-            </Widget>
-            <TableWidget>
-              <Title>Selected Communities</Title>
-              <Table>
-                {loadedCommunities.map((item: INameToValueMap) => {
-                  const image = communities[item.id]
-                  return <>
-                    <TableItem>
-                      <TableItemImage src={image.logo} alt={item.name} />
-                      {item.name}
-                    </TableItem>
-                    <TableItem onClick={_ => {
-                      getOwnersData(item.id)
-                    }}>
-                      Download CSV <Icons.DownloadIcon />
-                    </TableItem>
-                  </>
-                })}
-              </Table>
-              <LinkAnchor to='/communities'>See the full list of communities <Icons.GoBackIcon /></LinkAnchor>
-            </TableWidget>
-          </DoubleWidget>
+          <CampaignTree
+            recipientsValue={recipientsValue}
+            setRecipientsValue={setRecipientsValue}
+            setRecipients={setRecipients}
+            cancel={cancel}
+          />
         </>
-        case 'publish_ipfs':
-          return <>
-            {bredcrumbs}
-            <DoubleWidget>
-              <Widget>
-                <WidgetInput
-                  title='Enter title here'
-                  onChange={value => { setDropTitle(value); return value}}
-                  value={dropTitle}
-                />
-                <WidgetInput
-                  title='Logo URL'
-                  onChange={value => { setDropLogoURL(value); return value}}
-                  value={dropLogoURL}
-                  placeholder='https://'
-                />
-                <WidgetTextarea
-                  title='Description'
-                  onChange={value => { setDropDescription(value); return value}}
-                  value={dropDescription}
-                  limit={120}
-                  placeholder='Enter description here'
-                />
-                <WidgetControls>
-                  <WidgetButton
-                    title='Start over'
-                    appearance='inverted'
-                    onClick={cancel}
-                  />
-                  <WidgetButton
-                    title='Publish'
-                    loading={loading}
-                    appearance={loading ? 'gradient' : undefined}
-                    disabled={!dropTitle || !tokenAddress}
-                    onClick={() => {
-                      if (!tokenAddress || !chainId) { return }
-                      createIPFS(merkleTree, dropTitle, dropDescription, dropLogoURL, tokenAddress, chainId)
-                    }}
-                  />
-                </WidgetControls>
-              </Widget>
-              <PreviewWidget
-                title={dropTitle}
-                description={dropDescription}
-                image={dropLogoURL}
-              />
-            </DoubleWidget>
-          </>
-        case 'deploy_contract':
-          return <>
-            {bredcrumbs}
-            <Widget>
-              <DataBlock
-                title='RetroDrop’s title'
-                text={dropTitle}
-              />
-              <WidgetDataSplit>
-                <WidgetDataBlock
-                  title='Network'
-                  text={capitalize(defineNetworkName(chainId))}
-                />
-                <WidgetDataBlock
-                  title='Type of token'
-                  text='ERC1155'
-                />
-              </WidgetDataSplit>
-              <DataBlock
-                title='Token Address'
-                text={currentTokenAddress}
-              />
-              <WidgetDataSplit>
-                <WidgetDataBlock
-                  title='Total NFTs dropped'
-                  text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
-                />
-                <WidgetDataBlock
-                  title='Recipients'
-                  text={recipients ? Object.keys(recipients).length : 0}
-                />
-              </WidgetDataSplit>
-              <WidgetControls>
-                <WidgetButton
-                  title='Start over'
-                  appearance='inverted'
-                  onClick={cancel}
-                />
-                <WidgetButton
-                  title='Deploy'
-                  appearance={contractLoading ? 'gradient' : undefined}
-                  disabled={Boolean(!tokenAddress || !ipfs)}
-                  loading={contractLoading}
-                  onClick={() => {
-                    if (tokenAddress && ipfs) {
-                      createDrop(provider, merkleTree, tokenAddress, ipfs)
-                    }
-                  }}
-                />
-              </WidgetControls>
-            </Widget>
-          </>
-        case 'give_approval':
-          return <>
-            {bredcrumbs}
-            <Widget>
-              <DataBlock
-                title='RetroDrop’s title'
-                text={dropTitle}
-              />
-              <WidgetDataSplit>
-                <WidgetDataBlock
-                  title='Network'
-                  text='Ethereum Mainnet'
-                />
-                <WidgetDataBlock
-                  title='Type of token'
-                  text='ERC1155'
-                />
-              </WidgetDataSplit>
-              <DataBlock
-                title='Token Address'
-                text={currentTokenAddress}
-              />
-              <DataBlock
-                title='Your retrodrop contract'
-                text={dropAddress || ''}
-              />
-              <WidgetDataSplit>
-                <WidgetDataBlock
-                  title='Total NFTs dropped'
-                  text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
-                />
-                <WidgetDataBlock
-                  title='Recipients'
-                  text={Object.keys(recipients || {}).length}
-                />
-              </WidgetDataSplit>
-              <WidgetControls>
-                <WidgetButton
-                  title='Start over'
-                  appearance='inverted'
-                  onClick={cancel}
-                />
-                <WidgetButton
-                  title='Give approval'
-                  disabled={!tokenAddress || !dropAddress}
-                  loading={contractLoading}
-                  appearance={contractLoading ? 'gradient' : undefined}
-                  onClick={() => {
-                    if (!tokenAddress || !dropAddress || !ipfs || !chainId || !type) { return }
-                    approve(
-                      provider,
-                      tokenAddress,
-                      address,
-                      dropAddress,
-                      ipfs,
-                      dropTitle,
-                      address,
-                      chainId,
-                      dropDescription,
-                      dropLogoURL,
-                      recipients,
-                      type,
-                      () => {
-                        history.push('/')
-                      }
-                    )
-                  }}
-                />
-              </WidgetControls>
-            </Widget>
-          </>
-        default:
-          return null
+      case 'publish_ipfs':
+        return <>
+          {bredcrumbs}
+          <CampaignInfo
+            dropTitle={dropTitle}
+            dropLogoURL={dropLogoURL}
+            dropDescription={dropDescription}
+            setDropTitle={setDropTitle}
+            setDropLogoURL={setDropLogoURL}
+            setDropDescription={setDropDescription}
+            cancel={cancel}
+          />
+        </>
+      case 'deploy_contract':
+        return <>
+          {bredcrumbs}
+          <CampaignDeploy
+            dropTitle={dropTitle}
+            recipients={recipients}
+            cancel={cancel}
+          />
+        </>
+      case 'give_approval':
+        return <>
+          {bredcrumbs}
+          <CampaignApproval
+            recipients={recipients}
+            cancel={cancel}
+            dropTitle={dropTitle}
+            dropLogoURL={dropLogoURL}
+            dropDescription={dropDescription}
+          />
+        </>
+      default:
+        return null
     }
   }
 

@@ -1,6 +1,7 @@
 type TMerkleTree = {
   merkleRoot: string,
   tokenTotal: string,
+  creationTime: string | number,
   claims: {
     [recepientAddress: string]: {
       index: number,
@@ -11,8 +12,7 @@ type TMerkleTree = {
   },
   title: string,
   description: string,
-  logoURL: string,
-  creationTime: string | number
+  logoURL: string
 }
 
 export default TMerkleTree
