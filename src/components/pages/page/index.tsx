@@ -4,7 +4,6 @@ import { Header, Footer } from 'components/common'
 import { Page, MainContent, Content } from './styled-components'
 import { ThemeProvider } from 'styled-components'
 import themes from 'themes'
-import { Scrollbar } from "react-scrollbars-custom";
 
 interface PageProps {
   account?: string,
@@ -19,9 +18,7 @@ const PageComponent: FC<PageProps> = ({ children, account, chainId }) => {
         <MainContent>
           <Header />
           <Content>
-            <Scrollbar style={{ width: '100%', height: 'calc(100vh - 68px - 48px - 40px)' }}>
-              {children}
-            </Scrollbar>
+            {children}
           </Content>
           <Footer />
         </MainContent>

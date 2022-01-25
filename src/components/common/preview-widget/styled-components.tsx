@@ -51,3 +51,7 @@ export const PreviewWidgetLabel = styled.div`
 export const PreviewWidgetButton = styled(Button)`
   width: 134px;
 `
+
+export const PreviewWidgetBlank = styled(PreviewWidgetImage)`
+  background-color: ${props => props.theme.tagDefaultColor};
+`

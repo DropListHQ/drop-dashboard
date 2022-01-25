@@ -2,6 +2,10 @@ import styled from 'styled-components'
 
 export const Container = styled.div`
   margin-bottom: 36px;
+
+  &:last-child {
+    margin-bottom: 0px;
+  }
 `
 
 export const Text = styled.p`
