@@ -58,12 +58,12 @@ const CampaignsCreate: FC<ReduxType> = ({
   step,
   setType,
 }) => {
-  const [ currentTokenAddress, setCurrentTokenAddress ] = useState('0x35573543F290fef43d62Ad3269BB9a733445ddab')
-  const [ recipientsValue, setRecipientsValue ] = useState('0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 4, 2')
+  const [ currentTokenAddress, setCurrentTokenAddress ] = useState('')
+  const [ recipientsValue, setRecipientsValue ] = useState('')
   const [ recipients, setRecipients ] = useState<TRecipientsData>({})
-  const [ dropTitle, setDropTitle ] = useState('Test Drop')
-  const [ dropLogoURL, setDropLogoURL ] = useState('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvPS5Lb__A7MNVvat4rHsOWcWQ7yQIF_FIkw&usqp=CAU')
-  const [ dropDescription, setDropDescription ] = useState('Test')
+  const [ dropTitle, setDropTitle ] = useState('')
+  const [ dropLogoURL, setDropLogoURL ] = useState('')
+  const [ dropDescription, setDropDescription ] = useState('')
 
   const cancel = () => setStep('choose_type')
   
