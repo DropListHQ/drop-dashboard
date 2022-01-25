@@ -13,7 +13,7 @@ export const Footer = styled.footer`
 export const FooterMenu = styled.div`
   display: flex;  
 `
-export const FooterMenuItem = styled(Link)`
+export const FooterMenuItem = styled.a`
   color: ${props => props.theme.primaryTextColor};
   margin-right: 30px;
   font-weight: 700;

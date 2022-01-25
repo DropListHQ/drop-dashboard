@@ -10,11 +10,11 @@ const FooterComponent = () => {
   return <Footer>
     <FooterLogo>DropList</FooterLogo>
     <FooterMenu>
-      <FooterMenuItem target='_blank' to='https://twitter.com/DropList_eth'>
+      <FooterMenuItem target='_blank' href='https://twitter.com/DropList_eth'>
         Twitter
       </FooterMenuItem>
 
-      <FooterMenuItem target='_blank' to='https://discord.com/invite/UCYhTkQSyg'>
+      <FooterMenuItem target='_blank' href='https://discord.com/invite/UCYhTkQSyg'>
         Discord
       </FooterMenuItem>
     </FooterMenu>
