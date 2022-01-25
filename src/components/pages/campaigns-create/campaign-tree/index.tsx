@@ -17,14 +17,14 @@ import Icons from 'icons'
 import {
   Widget
 } from 'components/common'
+import { buildMerkleTreeERC1155, buildMerkleTreeERC20, buildMerkleTreeERC721 } from '@drop-protocol/drop-sdk'
+
 import {
   parseDataERC20,
   parseDataERC1155,
-  parseDataERC721,
-  parseBalanceMapERC1155,
-  parseBalanceMapERC721,
-  parseBalanceMapERC20
+  parseDataERC721
 } from 'helpers'
+
 import * as communitiesAsyncActions from 'data/store/reducers/communities/async-actions'
 import { TRetroDropStep, TRecipientsData, TRetroDropType } from 'types'
 import * as newRetroDropActions from 'data/store/reducers/new-retro-drop/actions'
@@ -121,7 +121,7 @@ const CampaignTree: FC<ReduxType> = ({
       if (!recipientsData) {
         return false
       }
-      merkleData = parseBalanceMapERC1155(recipientsData)
+      merkleData = buildMerkleTreeERC1155(recipientsData)
     }
 
     if (type === 'erc721') {
@@ -129,7 +129,7 @@ const CampaignTree: FC<ReduxType> = ({
       if (!recipientsData) {
         return false
       }
-      merkleData = parseBalanceMapERC721(recipientsData)
+      merkleData = buildMerkleTreeERC721(recipientsData)
     }
 
     if (type === 'erc20') {
@@ -137,7 +137,7 @@ const CampaignTree: FC<ReduxType> = ({
       if (!recipientsData) {
         return false
       }
-      merkleData = parseBalanceMapERC20(recipientsData)
+      merkleData = buildMerkleTreeERC20(recipientsData)
     }
 
     if (recipientsData && merkleData) {

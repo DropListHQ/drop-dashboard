@@ -32,7 +32,7 @@ const RetroactiveDrops: FC<ReduxType & TProps> = ({ onTypeChoose }) => {
           onTypeChoose('erc1155')
         }}
       />
-      <MiniWidget
+      {false && <MiniWidget
         title='ERC721'
         subtitle='ethereum'
         description='Make a retrodrop to major crypto communities and collectors'
@@ -40,8 +40,8 @@ const RetroactiveDrops: FC<ReduxType & TProps> = ({ onTypeChoose }) => {
         action={() => {
           onTypeChoose('erc721')
         }}
-      />
-      <MiniWidget
+      />}
+      {false && <MiniWidget
         title='ERC20'
         subtitle='ethereum'
         description='Make a retrodrop to major crypto communities and collectors'
@@ -49,7 +49,7 @@ const RetroactiveDrops: FC<ReduxType & TProps> = ({ onTypeChoose }) => {
         action={() => {
           onTypeChoose('erc20')
         }}
-      />
+      />}
     </Container>
   </div>
 }

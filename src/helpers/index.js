@@ -11,6 +11,7 @@ import defineJSONRpcUrl from './define-json-rpc-url'
 import copyToClipboard from './copy-to-clipboard'
 import getCSV from './get-csv'
 import checkRecipientsDataFormat from './check-recipients-data-format'
+import hexlifyIpfsHash from './hexlify-ipfs-hash'
 
 export {
   shortenString,
@@ -25,5 +26,6 @@ export {
   copyToClipboard,
   checkRecipientsDataFormat,
   parseBalanceMapERC721,
-  parseBalanceMapERC20
+  parseBalanceMapERC20,
+  hexlifyIpfsHash
 }

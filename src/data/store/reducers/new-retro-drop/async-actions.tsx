@@ -2,7 +2,6 @@ import { Dispatch } from 'redux';
 import * as actionsNewRetroDrop from './actions';
 import { NewRetroDropActions } from './types';
 import { pinataApi } from 'data/api'
-
 type TIPFSResponse = { data: { IpfsHash: string, PinSize: number, Timestamp: string } }
 
 export async function createIPFS(dispatch: Dispatch<NewRetroDropActions>, data: any, title: string, description: string, logoURL: string, tokenAddress: string, chainId: number) {

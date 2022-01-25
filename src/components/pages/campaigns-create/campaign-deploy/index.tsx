@@ -11,13 +11,14 @@ import {
   DataBlock
 } from 'components/common'
 import { defineNetworkName, capitalize } from 'helpers'
-import { TMerkleTree, TRecipientsData } from 'types'
+import { TMerkleTree, TRecipientsData, TRetroDropType } from 'types'
 
 import * as newContractAsyncActions from 'data/store/reducers/contract/async-actions'
 import { Dispatch } from 'redux';
 import { NewRetroDropActions } from 'data/store/reducers/new-retro-drop/types'
 import { connect } from 'react-redux'
 import { ContractActions } from 'data/store/reducers/contract/types'
+import { type } from 'os';
 
 type TProps = {
   dropTitle: string,
@@ -27,7 +28,7 @@ type TProps = {
 
 const mapStateToProps = ({
   user: { address, provider, chainId },
-  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree },
+  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree, type },
   contract: { loading: contractLoading },
 }: RootState) => ({
   loading,
@@ -38,7 +39,8 @@ const mapStateToProps = ({
   tokenAddress,
   merkleTree,
   chainId,
-  contractLoading
+  contractLoading,
+  type
 })
 const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions>) => {
   return {
@@ -46,8 +48,10 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
       provider: any,
       merkleTree: TMerkleTree,
       tokenAddress: string,
-      ipfsHash: string
-    ) => newContractAsyncActions.createDrop(dispatch, provider, merkleTree, tokenAddress, ipfsHash)
+      ipfsHash: string,
+      chainId: number,
+      type: TRetroDropType
+    ) => newContractAsyncActions.createDrop(dispatch, provider, merkleTree, tokenAddress, ipfsHash, chainId, type)
   }
 }
 type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps> & TProps
@@ -63,7 +67,8 @@ const CampaignDeploy: FC<ReduxType> = ({
   ipfs,
   provider,
   merkleTree,
-  createDrop
+  createDrop,
+  type
 }) => {
   return <Widget>
     <DataBlock
@@ -106,8 +111,8 @@ const CampaignDeploy: FC<ReduxType> = ({
         disabled={Boolean(!tokenAddress || !ipfs)}
         loading={contractLoading}
         onClick={() => {
-          if (tokenAddress && ipfs) {
-            createDrop(provider, merkleTree, tokenAddress, ipfs)
+          if (tokenAddress && ipfs && chainId && type) {
+            createDrop(provider, merkleTree, tokenAddress, ipfs, chainId, type)
           }
         }}
       />

@@ -7,49 +7,70 @@ import { NewRetroDropActions } from '../new-retro-drop/types';
 import { DropsActions } from '../drops/types';
 import { ethers } from 'ethers';
 import { TMerkleTree, TRecipientsData, TRetroDropType } from 'types'
-import { RetroDropContract, ERC1155Contract } from 'abi'
-
-const {
-	REACT_APP_FACTORY_ADDRESS = '0x76017073788f352a47374e67323fe4537ca54781',
-	REACT_APP_TEMPLATE_ADDRESS = '0xf28565dc20a66e5f1904a816c38958d6b55186eb'
-} = process.env
+import { ERC1155Contract } from 'abi'
+import contracts from 'configs/contracts'
+import { DropFactoryInterface } from '@drop-protocol/drop-sdk'
+import { hexlifyIpfsHash } from 'helpers'
+function addDays(date: number, days: number) {
+  var result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
 
 export async function createDrop(
 	dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions>,
 	provider: any,
 	merkleTree: TMerkleTree,
 	tokenAddress: string,
-	ipfsHash: string
+	ipfsHash: string,
+	chainId: number,
+	type: TRetroDropType
 ) {
   dispatch(actionsContract.setLoading(true))
-	const drop = await deploy(provider, merkleTree, tokenAddress, ipfsHash)
+	const contractData = contracts[chainId]
+	const factoryAddress = contractData.factory
+	const templateAddress = contractData[type]
+	let drop
+	if (type === 'erc1155') {
+		drop = await deployERC1155(provider, merkleTree, tokenAddress, ipfsHash, factoryAddress, templateAddress)
+	} else {
+		drop = await deployERC1155(provider, merkleTree, tokenAddress, ipfsHash, factoryAddress, templateAddress)
+	}
 	dispatch(actionsNewRetroDrop.setDropAddress(drop))
 	dispatch(actionsContract.setLoading(false))
 	dispatch(actionsNewRetroDrop.setStep('give_approval'))
 }
 
-const deploy = async (
+const deployERC1155 = async (
 	provider: any,
 	merkleTree: TMerkleTree,
 	tokenAddress: string,
-	ipfsHash: string
+	ipfsHash: string,
+	factoryAddress: string,
+	templateAddress: string
 ) => {
 	const signer = await provider.getSigner()
-	const ipfs = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(ipfsHash))
-	const proxyContract = await new ethers.Contract(REACT_APP_FACTORY_ADDRESS, RetroDropContract, signer)
+	const proxyContract = await new ethers.Contract(factoryAddress, DropFactoryInterface, signer)
+	const ipfsHexlified = hexlifyIpfsHash(ipfsHash)
   await proxyContract.createDrop(
-		REACT_APP_TEMPLATE_ADDRESS,
+		templateAddress,
 		tokenAddress,
 		merkleTree.merkleRoot,
-		Math.round(Number(new Date()) / 1000),
-		ipfs,
-		ipfs
+		+addDays(+(new Date()), 7),
+		ipfsHexlified
 	)
 	
 	const checkReceipt = async function (): Promise<string> {
 		return new Promise((resolve, reject) => {
-			proxyContract.on("CreateDrop", (drop: string, token: string, ipfsHash: string, event) => { 
-				if (ipfsHash === ipfs) {
+			proxyContract.on("CreateDrop", (
+				drop: string,
+				token: string,
+				template: string,
+				expiration: any,
+				ipfs: string,
+				event
+			) => { 
+				if (ipfsHexlified === ipfs) {
 					resolve(drop)
 				}
 		 })

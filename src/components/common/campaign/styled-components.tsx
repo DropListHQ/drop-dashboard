@@ -57,4 +57,5 @@ export const CampaignStatus = styled.div<TCampaignStatus>`
 export const CampaignButton = styled(Button)`
   width: 152px;
   margin-bottom: 16px;
+  min-height: 36px;
 `
