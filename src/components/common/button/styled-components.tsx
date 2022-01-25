@@ -28,7 +28,7 @@ export const Button = styled.button.attrs(props => ({
   justify-content: center;
   border-radius: 20px;
   transition: color .3s, background-color .3s, transform .3s;
-  border: 2px solid ${props => props.theme.buttonDefaultColor};
+  border: 1px solid ${props => props.theme.buttonDefaultColor};
 
   ${props => props.size && props.size === 'small' && css`
     font-size: 12px;
