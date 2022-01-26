@@ -12,6 +12,9 @@ export const WidgetInput = styled(Input)`
 `;
 
 export const WidgetTextarea = styled(Textarea)`
+  textarea {
+    min-height: 420px;
+  }
 `
 
 export const WidgetControls = styled.div`

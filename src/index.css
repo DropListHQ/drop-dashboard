@@ -22,6 +22,7 @@
 body {
   margin: 0;
   font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  background-color: #F7F8FC;
 }
 
 * {

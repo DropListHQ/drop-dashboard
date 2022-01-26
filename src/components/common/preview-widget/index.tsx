@@ -4,7 +4,8 @@ import {
   PreviewWidgetImage,
   PreviewWidgetTitle,
   PreviewWidgetLabel,
-  PreviewWidgetButton
+  PreviewWidgetButton,
+  PreviewWidgetBlank
 } from './styled-components'
 import { FC } from 'react'
 
@@ -22,10 +23,10 @@ const PreviewWidgetComponent: FC<TProps> = ({
 }) => {
   return <PreviewWidget>
     <PreviewWidgetLabel>Claim page preview</PreviewWidgetLabel>
-    <PreviewWidgetImage
+    {image ? <PreviewWidgetImage
       src={image}
       alt={title}
-    />
+    /> : <PreviewWidgetBlank />}
     <PreviewWidgetTitle>{title}</PreviewWidgetTitle>
     <PreviewWidgetDescription>{description}</PreviewWidgetDescription>
     <PreviewWidgetButton title='Claim now' onClick={() => {}} />

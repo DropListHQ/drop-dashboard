@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import {
   WidgetInput,
-  WidgetTextarea,
   WidgetControls,
   WidgetButton,
   DoubleWidget,
@@ -9,7 +8,8 @@ import {
 import { RootState } from 'data/store';
 import {
   Widget,
-  PreviewWidget
+  PreviewWidget,
+  Textarea
 } from 'components/common'
 import * as newRetroDropAsyncActions from 'data/store/reducers/new-retro-drop/async-actions'
 import { Dispatch } from 'redux';
@@ -74,7 +74,7 @@ const CampaignInfo: FC<ReduxType> = ({
         value={dropLogoURL}
         placeholder='https://'
       />
-      <WidgetTextarea
+      <Textarea
         title='Description'
         onChange={value => { setDropDescription(value); return value}}
         value={dropDescription}

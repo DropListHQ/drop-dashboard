@@ -39,32 +39,32 @@ const TextareaComponent: FC<Props> = ({
 
   const limitContainer = limit ? <TextareaFieldLimit>{value.length || 0}/{limit}</TextareaFieldLimit> : null
     return <ThemeProvider theme={themes.light}>
-        <TextareaContainer
-          disabled={disabled}
-          error={error}
-          className={className}
-        >
-          <TextareaTitle>{title}</TextareaTitle>
-          <TextareaFieldContainer>
-            <TextareaField
-              onChange={(evt) => {
-                if (limit && limit > 0) {
-                  if (Number(evt.target.value.length) > limit) {
-                    return
-                  }
+      <TextareaContainer
+        disabled={disabled}
+        error={error}
+        className={className}
+      >
+        <TextareaTitle>{title}</TextareaTitle>
+        <TextareaFieldContainer>
+          <TextareaField
+            onChange={(evt) => {
+              if (limit && limit > 0) {
+                if (Number(evt.target.value.length) > limit) {
+                  return
                 }
-                onChange(evt.target.value)
-              }}
-              disabled={disabled}
-              placeholder={placeholder}
-              value={value}
-              limit={limit}
-            />
-            {limitContainer}
-          </TextareaFieldContainer>
-          
-        </TextareaContainer>
-        {error && <TextareaError>{error}</TextareaError>}
+              }
+              onChange(evt.target.value)
+            }}
+            disabled={disabled}
+            placeholder={placeholder}
+            value={value}
+            limit={limit}
+          />
+          {limitContainer}
+        </TextareaFieldContainer>
+        
+      </TextareaContainer>
+      {error && <TextareaError>{error}</TextareaError>}
     </ThemeProvider>
 }
 

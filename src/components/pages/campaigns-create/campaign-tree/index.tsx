@@ -65,35 +65,35 @@ const defineTreePlaceholder = (type: TRetroDropType | null) : string => {
     case 'erc1155':
       return `Be careful and paste info in the following order:
 
-  Receiver address, token ID, amount
-  Example:
-  0x70dfbd1149250eddeae6ed2381993b517a1c9ce8, 1, 1
-  0x203477162865dd22488a60e3e478e7795af95052, 2, 1
-  0x2693ad693d042b9c04d2dce0a44a7608ea1f7d47, 1, 2
+Receiver address, token ID, amount
+Example:
+0x70dfbd1149250eddeae6ed2381993b517a1c9ce8, 1, 1
+0x203477162865dd22488a60e3e478e7795af95052, 2, 1
+0x2693ad693d042b9c04d2dce0a44a7608ea1f7d47, 1, 2
 
-  and so on
+and so on
 `
     case 'erc721':
       return `Be careful and paste info in the following order:
 
-  Receiver address, token ID
-  Example:
-  0x70dfbd1149250eddeae6ed2381993b517a1c9ce8, 1
-  0x203477162865dd22488a60e3e478e7795af95052, 2
-  0x2693ad693d042b9c04d2dce0a44a7608ea1f7d47, 1
+Receiver address, token ID
+Example:
+0x70dfbd1149250eddeae6ed2381993b517a1c9ce8, 1
+0x203477162865dd22488a60e3e478e7795af95052, 2
+0x2693ad693d042b9c04d2dce0a44a7608ea1f7d47, 1
 
-  and so on
+and so on
 ` 
     case 'erc20':
       return `Be careful and paste info in the following order:
 
-  Receiver address, amount
-  Example:
-  0x70dfbd1149250eddeae6ed2381993b517a1c9ce8, 10
-  0x203477162865dd22488a60e3e478e7795af95052, 20
-  0x2693ad693d042b9c04d2dce0a44a7608ea1f7d47, 10
+Receiver address, amount
+Example:
+0x70dfbd1149250eddeae6ed2381993b517a1c9ce8, 10
+0x203477162865dd22488a60e3e478e7795af95052, 20
+0x2693ad693d042b9c04d2dce0a44a7608ea1f7d47, 10
 
-  and so on
+and so on
 ` 
     default: return ''
   }
