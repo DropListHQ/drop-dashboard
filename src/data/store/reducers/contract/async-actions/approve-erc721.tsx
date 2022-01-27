@@ -32,6 +32,7 @@ export default async function approveERC721(
 		return new Promise((resolve, reject) => {
 			const interval = setInterval(async function () {
 				const isApproved = await contractInstance.isApprovedForAll(userAddress, dropAddress)
+				console.log({ isApproved })
 				if (isApproved) {
 					clearInterval(interval)
 					resolve(true)

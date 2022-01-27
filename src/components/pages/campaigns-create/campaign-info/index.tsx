@@ -15,6 +15,7 @@ import * as newRetroDropAsyncActions from 'data/store/reducers/new-retro-drop/as
 import { Dispatch } from 'redux';
 import { NewRetroDropActions } from 'data/store/reducers/new-retro-drop/types'
 import { connect } from 'react-redux'
+import { TRetroDropType } from 'types';
 
 type TProps = {
   dropTitle: string,
@@ -28,7 +29,7 @@ type TProps = {
 
 const mapStateToProps = ({
   user: { address, provider, chainId },
-  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree },
+  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree, type },
 }: RootState) => ({
   loading,
   address,
@@ -37,11 +38,29 @@ const mapStateToProps = ({
   step,
   tokenAddress,
   merkleTree,
-  chainId
+  chainId,
+  type
 })
 const mapDispatcherToProps = (dispatch: Dispatch<NewRetroDropActions>) => {
   return {
-    createIPFS: (data: any, title: string, description: string, logoURL: string, tokenAddress: string, chainId: number) => newRetroDropAsyncActions.createIPFS(dispatch, data, title, description, logoURL, tokenAddress, chainId),
+    createIPFS: (
+      data: any,
+      title: string,
+      description: string,
+      logoURL: string,
+      tokenAddress: string,
+      chainId: number,
+      type: TRetroDropType
+    ) => newRetroDropAsyncActions.createIPFS(
+      dispatch,
+      data,
+      title,
+      description,
+      logoURL,
+      tokenAddress,
+      chainId,
+      type
+    ),
   }
 }
 type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps> & TProps
@@ -59,7 +78,8 @@ const CampaignInfo: FC<ReduxType> = ({
   createIPFS,
   tokenAddress,
   merkleTree,
-  chainId
+  chainId,
+  type
 }) => {
   return <DoubleWidget>
     <Widget>
@@ -93,8 +113,8 @@ const CampaignInfo: FC<ReduxType> = ({
           appearance={loading ? 'gradient' : undefined}
           disabled={!dropTitle || !tokenAddress}
           onClick={() => {
-            if (!tokenAddress || !chainId) { return }
-            createIPFS(merkleTree, dropTitle, dropDescription, dropLogoURL, tokenAddress, chainId)
+            if (!tokenAddress || !chainId || !type) { return }
+            createIPFS(merkleTree, dropTitle, dropDescription, dropLogoURL, tokenAddress, chainId, type)
           }}
         />
       </WidgetControls>
