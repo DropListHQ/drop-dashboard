@@ -8,12 +8,17 @@ import { Link, LinkContainer, LinkValue, LinkTitle, InfoBlockStyled, WidgetDataS
 import { copyToClipboard } from 'helpers'
 import { useHistory } from 'react-router-dom'
 import { defineNetworkName, capitalize } from 'helpers'
+import { TRecipientsData, TRetroDropType } from 'types'
 
 const { REACT_APP_CLAIM_URL } = process.env
 
 type TReduceTokens = {
   [tokenId: string]: number
 }
+
+type TMapTokensIds = string[]
+
+type TMapTokensAmount = number
 
 interface MatchParams {
   id: string;
@@ -35,6 +40,38 @@ const mapStateToProps = ({
 
 type ReduxType = ReturnType<typeof mapStateToProps>
 
+const defineTokenTexts = (recipients: TRecipientsData, type: TRetroDropType) => {
+  if (type === 'erc1155') {
+    const tokens = recipients && Object.values(recipients).reduce<TReduceTokens>((sum, item) => {
+      sum[item.tokenId] = (sum[item.tokenId] || 0) + Number(item.amount)
+      return sum
+    }, {})
+
+    return <WidgetDataSplit>
+      <DataBlock title='Token ID' text={Object.keys(tokens).join(', ')} />
+      <DataBlock title='Total amount' text={Object.values(tokens).reduce((a, b) => a + b, 0)} />
+    </WidgetDataSplit>
+  }
+
+  if (type === 'erc721') {
+    const tokens = recipients && Object.values(recipients).map<TMapTokensIds>((item) => item.tokenId)
+    return <WidgetDataSplit>
+      <DataBlock title='Token ID' text={tokens.join(', ')} />
+    </WidgetDataSplit>
+  }
+
+  if (type === 'erc20') {
+    const tokensAmount = recipients && Object.values(recipients).reduce<TMapTokensAmount>((sum, item) => {
+      return sum + Number(item.amount)
+    }, 0)
+    return <WidgetDataSplit>
+      <DataBlock title='Total amount' text={tokensAmount} />
+    </WidgetDataSplit>
+  }
+
+  
+}
+
 const CampaignDetails: FC<ReduxType & IProps & RouteComponentProps> = (props) => {
   const { retroDrops, match: { params } } = props
   const history = useHistory()
@@ -46,10 +83,7 @@ const CampaignDetails: FC<ReduxType & IProps & RouteComponentProps> = (props) =>
   const { ipfsHash, recipients, title, chainId, tokenAddress, type } = currentCampaign
   const link = `${REACT_APP_CLAIM_URL}/${ipfsHash}`
   
-  const tokens = recipients && Object.values(recipients).reduce<TReduceTokens>((sum, item) => {
-    sum[item.tokenId] = (sum[item.tokenId] || 0) + Number(item.amount)
-    return sum
-  }, {})
+  
 
   return <div>
     <Breadcrumbs
@@ -72,10 +106,7 @@ const CampaignDetails: FC<ReduxType & IProps & RouteComponentProps> = (props) =>
           <DataBlock title='Type of token' text={type} />
         </WidgetDataSplit>
         <DataBlock title='Token address' text={tokenAddress} />
-        {tokens && <WidgetDataSplit>
-          <DataBlock title='Token ID' text={Object.keys(tokens).join(', ')} />
-          <DataBlock title='Total amount' text={Object.values(tokens).reduce((a, b) => a + b, 0)} />
-        </WidgetDataSplit>}
+        {defineTokenTexts(recipients, type)}
       </WidgetContainer>
 
       <LinkContainer>

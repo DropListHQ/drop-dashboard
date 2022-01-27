@@ -19,9 +19,10 @@ import CampaignDeploy from './campaign-deploy'
 import CampaignApproval from './campaign-approval'
 
 const mapStateToProps = ({
-  newRetroDrop: { step },
+  newRetroDrop: { step, type },
 }: RootState) => ({
-  step
+  step,
+  type
 })
 
 const mapDispatcherToProps = (dispatch: Dispatch<NewRetroDropActions>) => {
@@ -57,9 +58,8 @@ const CampaignsCreate: FC<ReduxType> = ({
   setStep,
   step,
   setType,
-}) => {
-  const [ currentTokenAddress, setCurrentTokenAddress ] = useState('')
-  const [ recipientsValue, setRecipientsValue ] = useState('')
+  type
+}) => {  
   const [ recipients, setRecipients ] = useState<TRecipientsData>({})
   const [ dropTitle, setDropTitle ] = useState('')
   const [ dropLogoURL, setDropLogoURL ] = useState('')
@@ -95,10 +95,8 @@ const CampaignsCreate: FC<ReduxType> = ({
         return <>
           {bredcrumbs}
           <CampaignInitial
-            currentTokenAddress={currentTokenAddress}
             dropLogoURL={dropLogoURL}
             dropDescription={dropDescription}
-            setCurrentTokenAddress={setCurrentTokenAddress}
             cancel={cancel}
           />
         </>
@@ -107,8 +105,6 @@ const CampaignsCreate: FC<ReduxType> = ({
         return <>
           {bredcrumbs}
           <CampaignTree
-            recipientsValue={recipientsValue}
-            setRecipientsValue={setRecipientsValue}
             setRecipients={setRecipients}
             cancel={cancel}
           />

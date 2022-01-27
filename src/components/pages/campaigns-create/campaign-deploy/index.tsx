@@ -12,13 +12,13 @@ import {
 } from 'components/common'
 import { defineNetworkName, capitalize } from 'helpers'
 import { TMerkleTree, TRecipientsData, TRetroDropType } from 'types'
-
-import * as newContractAsyncActions from 'data/store/reducers/contract/async-actions'
 import { Dispatch } from 'redux';
 import { NewRetroDropActions } from 'data/store/reducers/new-retro-drop/types'
 import { connect } from 'react-redux'
 import { ContractActions } from 'data/store/reducers/contract/types'
-import { type } from 'os';
+import {
+  createDrop
+} from 'data/store/reducers/contract/async-actions'
 
 type TProps = {
   dropTitle: string,
@@ -51,7 +51,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
       ipfsHash: string,
       chainId: number,
       type: TRetroDropType
-    ) => newContractAsyncActions.createDrop(dispatch, provider, merkleTree, tokenAddress, ipfsHash, chainId, type)
+    ) => createDrop(dispatch, provider, merkleTree, tokenAddress, ipfsHash, chainId, type)
   }
 }
 type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps> & TProps
@@ -80,20 +80,20 @@ const CampaignDeploy: FC<ReduxType> = ({
         title='Network'
         text={capitalize(defineNetworkName(chainId))}
       />
-      <WidgetDataBlock
+      {type && <WidgetDataBlock
         title='Type of token'
-        text='ERC1155'
-      />
+        text={type}
+      />}
     </WidgetDataSplit>
     <DataBlock
       title='Token Address'
       text={tokenAddress || ''}
     />
     <WidgetDataSplit>
-      <WidgetDataBlock
+      {type !== 'erc721' && <WidgetDataBlock
         title='Total NFTs dropped'
         text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
-      />
+      />}
       <WidgetDataBlock
         title='Recipients'
         text={recipients ? Object.keys(recipients).length : 0}

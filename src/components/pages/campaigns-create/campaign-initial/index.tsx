@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import {
   Widget
 } from 'components/common'
@@ -7,19 +7,24 @@ import {
   WidgetControls,
   WidgetButton
 } from '../styled-compoents'
-import { TRetroDropStep } from 'types'
+import { TRetroDropStep, TRetroDropType } from 'types'
 import { NewRetroDropActions } from 'data/store/reducers/new-retro-drop/types'
 import * as newRetroDropActions from 'data/store/reducers/new-retro-drop/actions'
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux'
+import { RootState } from 'data/store';
 
 type TProps = {
-  currentTokenAddress: string,
   dropLogoURL: string,
   dropDescription: string,
-  setCurrentTokenAddress: (value: string) => void,
   cancel: () => void
 }
+
+const mapStateToProps = ({
+  newRetroDrop: { type }
+}: RootState) => ({
+  type
+})
 
 const mapDispatcherToProps = (dispatch: Dispatch<NewRetroDropActions>) => {
   return {
@@ -27,15 +32,30 @@ const mapDispatcherToProps = (dispatch: Dispatch<NewRetroDropActions>) => {
     setTokenAddress: (tokenAddress: string) => dispatch(newRetroDropActions.setTokenAddress(tokenAddress)),
   }
 }
-type ReduxType = ReturnType<typeof mapDispatcherToProps> & TProps
+type ReduxType = ReturnType<typeof mapDispatcherToProps> & TProps & ReturnType<typeof mapStateToProps>
+
+type TCreateDefaultTokenAddress = (dropType: TRetroDropType | null) => string
+
+const createDefaultTokenAddress: TCreateDefaultTokenAddress = (type) => {
+  switch (type) {
+    case 'erc1155':
+      return '0x35573543F290fef43d62Ad3269BB9a733445ddab'
+    case 'erc721':
+      return '0x29a0a05fcc86e27442d4a0b1b498e71f78b6c459'
+    case 'erc20':
+      return '0xaFF4481D10270F50f203E0763e2597776068CBc5'
+    default:
+      return ''
+  }
+}
 
 const CampaignInfo: FC<ReduxType> = ({
-  currentTokenAddress,
   cancel,
-  setCurrentTokenAddress,
   setTokenAddress,
-  setStep
+  setStep,
+  type
 }) => {
+  const [ currentTokenAddress, setCurrentTokenAddress ] = useState(createDefaultTokenAddress(type))
   return <Widget>
     <WidgetInput
       title='Token’s address'
@@ -60,4 +80,4 @@ const CampaignInfo: FC<ReduxType> = ({
   </Widget>
 }
 
-export default connect(null, mapDispatcherToProps)(CampaignInfo)
+export default connect(mapStateToProps, mapDispatcherToProps)(CampaignInfo)

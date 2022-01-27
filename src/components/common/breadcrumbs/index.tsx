@@ -23,7 +23,7 @@ const defineTitle: TDefineTitle = (path) => {
   return <TitleContainer>
     {path.map((item, idx) => {
       if (idx === path.length - 1) { return null }
-      return <Title>{item} / </Title>
+      return <Title key={item}>{item} / </Title>
     })}
     <Title current>{path[path.length - 1]}</Title>
   </TitleContainer>

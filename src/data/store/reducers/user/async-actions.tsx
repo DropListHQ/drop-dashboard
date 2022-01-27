@@ -27,8 +27,7 @@ export async function connectWallet (dispatch: Dispatch<UserActions>) {
   
   let { chainId } = await providerWeb3.getNetwork()
   if (chainId !== 4) {
-    alert('Currently only Rinkeby is available.')
-    chainId = 4
+    return alert('Currently only Rinkeby is available.')
   }
   
   const accounts = await providerWeb3.listAccounts()
@@ -38,6 +37,7 @@ export async function connectWallet (dispatch: Dispatch<UserActions>) {
   dispatch(actions.setChainId(chainId))
 
   provider.on("accountsChanged", (accounts: string[]) => {
+    if (chainId !== 4) { return }
     const address = accounts[0] && accounts[0].toLowerCase()
     dispatch(actions.setAddress(address))
   });
@@ -46,8 +46,7 @@ export async function connectWallet (dispatch: Dispatch<UserActions>) {
   provider.on("chainChanged", (chainId: string) => {
     let chainIdConverted = parseInt(chainId, 16);
     if (chainIdConverted !== 4) {
-      alert('Currently only Rinkeby is available.')
-      chainIdConverted = 4
+      return alert('Currently only Rinkeby is available.')
     }
     dispatch(actions.setChainId(chainIdConverted))
   });

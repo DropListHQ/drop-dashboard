@@ -13,7 +13,10 @@ import {
 import { useHistory } from 'react-router-dom'
 import { TRetroDropType, TRecipientsData } from 'types'
 
-import * as newContractAsyncActions from 'data/store/reducers/contract/async-actions'
+import {
+  approveERC1155,
+  approveERC721
+} from 'data/store/reducers/contract/async-actions'
 import { Dispatch } from 'redux';
 import { NewRetroDropActions } from 'data/store/reducers/new-retro-drop/types'
 import { connect } from 'react-redux'
@@ -46,7 +49,7 @@ const mapStateToProps = ({
 })
 const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions>) => {
   return {
-    approve: (
+    approveERC1155: (
       provider: any,
       tokenAddress: string,
       userAddress: string,
@@ -60,7 +63,37 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
       recipientsData: TRecipientsData,
       type: TRetroDropType,
       callback: () => void
-    ) => newContractAsyncActions.approve(
+    ) => approveERC1155(
+      dispatch,
+      provider,
+      tokenAddress,
+      userAddress,
+      dropAddress,
+      ipfsHash,
+      title,
+      address,
+      chainId,
+      description,
+      dropLogoURL,
+      recipientsData,
+      type,
+      callback
+    ),
+    approveERC721: (
+      provider: any,
+      tokenAddress: string,
+      userAddress: string,
+      dropAddress: string,
+      ipfsHash: string,
+      title: string,
+      address: string,
+      chainId: number,
+      description: string,
+      dropLogoURL: string,
+      recipientsData: TRecipientsData,
+      type: TRetroDropType,
+      callback: () => void
+    ) => approveERC721(
       dispatch,
       provider,
       tokenAddress,
@@ -79,7 +112,15 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
   }
 }
 type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps> & TProps
+type TCountNFTs = (recipientsData: TRecipientsData, type: TRetroDropType | null) => number
 
+const countNFTs: TCountNFTs = (recipientsData, type) => {
+  if (!recipientsData) { return 0 }
+  if (type === 'erc1155' || type === 'erc20') {
+    return Object.values(recipientsData).reduce((sum, item) => sum + Number(item.amount), 0)
+  }
+  return Object.values(recipientsData).length
+}
 
 const CampaignApproval: FC<ReduxType> = ({
   dropTitle,
@@ -95,7 +136,8 @@ const CampaignApproval: FC<ReduxType> = ({
   address,
   dropLogoURL,
   dropDescription,
-  approve
+  approveERC1155,
+  approveERC721
 }) => {
   const history = useHistory()
   return <Widget>
@@ -110,7 +152,7 @@ const CampaignApproval: FC<ReduxType> = ({
       />
       <WidgetDataBlock
         title='Type of token'
-        text='ERC1155'
+        text={type || ''}
       />
     </WidgetDataSplit>
     <DataBlock
@@ -123,8 +165,8 @@ const CampaignApproval: FC<ReduxType> = ({
     />
     <WidgetDataSplit>
       <WidgetDataBlock
-        title='Total NFTs dropped'
-        text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
+        title='Total tokens dropped'
+        text={recipients ? countNFTs(recipients, type) : 0}
       />
       <WidgetDataBlock
         title='Recipients'
@@ -144,7 +186,8 @@ const CampaignApproval: FC<ReduxType> = ({
         appearance={contractLoading ? 'gradient' : undefined}
         onClick={() => {
           if (!tokenAddress || !dropAddress || !ipfs || !chainId || !type) { return }
-          approve(
+          const method = type === 'erc1155' ? approveERC1155 : approveERC721
+          method(
             provider,
             tokenAddress,
             address,
