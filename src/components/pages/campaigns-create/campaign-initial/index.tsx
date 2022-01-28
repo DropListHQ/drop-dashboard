@@ -37,16 +37,17 @@ type ReduxType = ReturnType<typeof mapDispatcherToProps> & TProps & ReturnType<t
 type TCreateDefaultTokenAddress = (dropType: TRetroDropType | null) => string
 
 const createDefaultTokenAddress: TCreateDefaultTokenAddress = (type) => {
-  switch (type) {
-    case 'erc1155':
-      return '0x35573543F290fef43d62Ad3269BB9a733445ddab'
-    case 'erc721':
-      return '0x29a0a05fcc86e27442d4a0b1b498e71f78b6c459'
-    case 'erc20':
-      return '0xaFF4481D10270F50f203E0763e2597776068CBc5'
-    default:
-      return ''
-  }
+  return ''
+  // switch (type) {
+  //   case 'erc1155':
+  //     return '0x35573543F290fef43d62Ad3269BB9a733445ddab'
+  //   case 'erc721':
+  //     return '0x29a0a05fcc86e27442d4a0b1b498e71f78b6c459'
+  //   case 'erc20':
+  //     return '0xaFF4481D10270F50f203E0763e2597776068CBc5'
+  //   default:
+  //     return ''
+  // }
 }
 
 const CampaignInfo: FC<ReduxType> = ({
