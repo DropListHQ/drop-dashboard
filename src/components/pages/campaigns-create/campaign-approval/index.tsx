@@ -15,7 +15,8 @@ import { TRetroDropType, TRecipientsData } from 'types'
 
 import {
   approveERC1155,
-  approveERC721
+  approveERC721,
+  approveERC20
 } from 'data/store/reducers/contract/async-actions'
 import { Dispatch } from 'redux';
 import { NewRetroDropActions } from 'data/store/reducers/new-retro-drop/types'
@@ -109,6 +110,36 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
       type,
       callback
     ),
+    approveERC20: (
+      provider: any,
+      tokenAddress: string,
+      userAddress: string,
+      dropAddress: string,
+      ipfsHash: string,
+      title: string,
+      address: string,
+      chainId: number,
+      description: string,
+      dropLogoURL: string,
+      recipientsData: TRecipientsData,
+      type: TRetroDropType,
+      callback: () => void
+    ) => approveERC20(
+      dispatch,
+      provider,
+      tokenAddress,
+      userAddress,
+      dropAddress,
+      ipfsHash,
+      title,
+      address,
+      chainId,
+      description,
+      dropLogoURL,
+      recipientsData,
+      type,
+      callback
+    ),
   }
 }
 type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps> & TProps
@@ -137,7 +168,8 @@ const CampaignApproval: FC<ReduxType> = ({
   dropLogoURL,
   dropDescription,
   approveERC1155,
-  approveERC721
+  approveERC721,
+  approveERC20
 }) => {
   const history = useHistory()
   return <Widget>
@@ -186,7 +218,10 @@ const CampaignApproval: FC<ReduxType> = ({
         appearance={contractLoading ? 'gradient' : undefined}
         onClick={() => {
           if (!tokenAddress || !dropAddress || !ipfs || !chainId || !type) { return }
-          const method = type === 'erc1155' ? approveERC1155 : approveERC721
+          let method
+          if (type === 'erc1155') { method = approveERC1155 }
+          else if (type === 'erc721') { method = approveERC721 }
+          else { method = approveERC20 }
           method(
             provider,
             tokenAddress,

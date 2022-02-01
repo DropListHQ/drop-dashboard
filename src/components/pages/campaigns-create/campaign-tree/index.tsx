@@ -114,6 +114,19 @@ const createDefaultRecipientsValue: TCreateDefaultRecipientsValue = (type) => {
   }
 }
 
+const createRecipientsTitle: TCreateDefaultRecipientsValue = (type) => {
+  switch (type) {
+    case 'erc1155':
+      return 'Receiver address, token ID, amount'
+    case 'erc721':
+      return 'Receiver address, token ID'
+    case 'erc20':
+      return 'Receiver address, amount'
+    default:
+      return ''
+  }
+}
+
 const CampaignTree: FC<ReduxType> = ({
   cancel,
   setMerkleTree,
@@ -165,7 +178,7 @@ const CampaignTree: FC<ReduxType> = ({
   return <DoubleWidget>
     <Widget>
       <WidgetTextarea
-        title='Receiver address, token ID, amount'
+        title={createRecipientsTitle(type)}
         onChange={value => { setRecipientsValue(value); return value }}
         value={recipientsValue}
         placeholder={defineTreePlaceholder(type)}

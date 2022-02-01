@@ -12,6 +12,7 @@ import copyToClipboard from './copy-to-clipboard'
 import getCSV from './get-csv'
 import checkRecipientsDataFormat from './check-recipients-data-format'
 import hexlifyIpfsHash from './hexlify-ipfs-hash'
+import getValidImage from './get-valid-image'
 
 export {
   shortenString,
@@ -27,5 +28,6 @@ export {
   checkRecipientsDataFormat,
   parseBalanceMapERC721,
   parseBalanceMapERC20,
-  hexlifyIpfsHash
+  hexlifyIpfsHash,
+  getValidImage
 }

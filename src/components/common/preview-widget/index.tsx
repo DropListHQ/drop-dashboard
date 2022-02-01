@@ -7,7 +7,9 @@ import {
   PreviewWidgetButton,
   PreviewWidgetBlank
 } from './styled-components'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
+import { getValidImage } from 'helpers'
+import dropPlaceholder from 'images/drop-placeholder.png'
 
 type TProps = {
   image?: string;
@@ -21,10 +23,22 @@ const PreviewWidgetComponent: FC<TProps> = ({
   title,
   description
 }) => {
+  const [ actualImage, setActualImage ] = useState(dropPlaceholder)
+
+  useEffect(() => {
+    const checkImage = async () => {
+      console.log({ image })
+      if (!image) { return }
+      const actualImage = await getValidImage(image)
+      setActualImage(actualImage)
+    }
+    checkImage()
+  }, [image])
+
   return <PreviewWidget>
     <PreviewWidgetLabel>Claim page preview</PreviewWidgetLabel>
-    {image ? <PreviewWidgetImage
-      src={image}
+    {actualImage ? <PreviewWidgetImage
+      src={actualImage}
       alt={title}
     /> : <PreviewWidgetBlank />}
     <PreviewWidgetTitle>{title}</PreviewWidgetTitle>
