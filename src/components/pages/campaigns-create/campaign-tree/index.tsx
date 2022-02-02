@@ -105,11 +105,8 @@ type TCreateDefaultRecipientsValue = (dropType: TRetroDropType | null) => string
 const createDefaultRecipientsValue: TCreateDefaultRecipientsValue = (type) => {
   switch (type) {
     case 'erc1155':
-      return '0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 4, 2'
     case 'erc721':
-      return '0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 4'
     case 'erc20':
-      return '0x70dFbD1149250EDDeAE6ED2381993B517A1c9cE8, 2'
     default:
       return ''
   }
