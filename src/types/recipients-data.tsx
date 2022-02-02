@@ -1,19 +1,19 @@
 export type TItemERC1155 = {
   [recipient: string]: {
-    tokenId: string | number,
-    amount: number
+    tokenId: string,
+    amount: string
   }
 }
 
 export type TItemERC721 = {
   [recipient: string]: {
-    tokenId: string | number
+    tokenId: string
   }
 }
 
 export type TItemERC20 = {
   [recipient: string]: {
-    amount: string | number
+    amount: string
   }
 }
 

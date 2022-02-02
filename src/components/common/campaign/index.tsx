@@ -1,7 +1,8 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Campaign, CampaignStatus, CampaignTitle, CampaignImage, CampaignButton } from './styled-components'
 import { copyToClipboard } from 'helpers'
 import { useHistory } from 'react-router-dom'
+import { getValidImage } from 'helpers'
 
 const { REACT_APP_CLAIM_URL } = process.env
 
@@ -21,9 +22,19 @@ const CampaignComponent: FC<TProps> = ({
   status
 }) => {
   const history = useHistory()
+  const [ imageURL, setImageURL ] = useState(image)
+  useEffect(() => {
+    const defineImage = async () => {
+      const image = await getValidImage(imageURL)
+      if (image === imageURL) { return }
+      console.log({ image })
+      setImageURL(image)
+    }
+    defineImage()
+  }, [])
   return <Campaign>
     <CampaignStatus status={status}>{status}</CampaignStatus>
-    <CampaignImage src={image} />
+    <CampaignImage src={imageURL} />
     <CampaignTitle>{title}</CampaignTitle>
     <CampaignButton
       onClick={() => {

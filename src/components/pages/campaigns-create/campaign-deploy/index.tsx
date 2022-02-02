@@ -10,7 +10,7 @@ import {
   Widget,
   DataBlock
 } from 'components/common'
-import { defineNetworkName, capitalize } from 'helpers'
+import { defineNetworkName, countTotalTokens, capitalize } from 'helpers'
 import { TMerkleTree, TRecipientsData, TRetroDropType } from 'types'
 import { Dispatch } from 'redux';
 import { NewRetroDropActions } from 'data/store/reducers/new-retro-drop/types'
@@ -28,7 +28,7 @@ type TProps = {
 
 const mapStateToProps = ({
   user: { address, provider, chainId },
-  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree, type },
+  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree, type, decimals },
   contract: { loading: contractLoading },
 }: RootState) => ({
   loading,
@@ -38,6 +38,7 @@ const mapStateToProps = ({
   step,
   tokenAddress,
   merkleTree,
+  decimals,
   chainId,
   contractLoading,
   type
@@ -68,7 +69,8 @@ const CampaignDeploy: FC<ReduxType> = ({
   provider,
   merkleTree,
   createDrop,
-  type
+  type,
+  decimals
 }) => {
   return <Widget>
     <DataBlock
@@ -90,10 +92,10 @@ const CampaignDeploy: FC<ReduxType> = ({
       text={tokenAddress || ''}
     />
     <WidgetDataSplit>
-      {type !== 'erc721' && <WidgetDataBlock
-        title='Total NFTs dropped'
-        text={recipients ? Object.values(recipients).reduce((sum, item) => sum + Number(item.amount), 0) : 0}
-      />}
+      <WidgetDataBlock
+        title='Total tokens dropped'
+        text={recipients ? countTotalTokens(recipients, type, decimals) : 0}
+      />
       <WidgetDataBlock
         title='Recipients'
         text={recipients ? Object.keys(recipients).length : 0}

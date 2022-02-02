@@ -61,3 +61,13 @@ export function setType(type: TRetroDropType) {
     type
   })
 }
+
+export function setDecimals(decimals: number) {
+  return action(Constants.DROP_SET_DECIMALS, {
+    decimals
+  })
+}
+
+export function clearNewRetroDrop() {
+  return action(Constants.DROP_CLEAR_NEW_RETRODROP)
+}

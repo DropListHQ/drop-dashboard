@@ -10,7 +10,8 @@ type TRetroDrop = {
   status: TRetroDropStatus,
   tokenAddress: string,
   recipients: TRecipientsData,
-  type: TRetroDropType
+  type: TRetroDropType,
+  decimals: number | null
 }
 
 export default TRetroDrop

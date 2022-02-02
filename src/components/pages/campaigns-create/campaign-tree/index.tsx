@@ -45,10 +45,11 @@ type TProps = {
 
 const mapStateToProps = ({
   communities: { communities },
-  newRetroDrop: { type }
+  newRetroDrop: { type, tokenAddress, decimals },
+  user: { provider }
 }: RootState) => ({
   loadedCommunities: communities,
-  type
+  type, tokenAddress, provider, decimals
 })
 const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions>) => {
   return {
@@ -134,14 +135,18 @@ const CampaignTree: FC<ReduxType> = ({
   setRecipients,
   loadedCommunities,
   getOwnersData,
-  type
+  type,
+  tokenAddress,
+  provider,
+  decimals
 }) => {
 
   const [ recipientsValue, setRecipientsValue ] = useState(createDefaultRecipientsValue(type))
 
-  const createTree = (type: TRetroDropType, recipientsValue: string): boolean => {
+  const createTree = async (type: TRetroDropType, recipientsValue: string, tokenAddress: string): Promise<boolean> => {
     let recipientsData
     let merkleData
+    console.log({ recipientsValue, type, decimals })
     if (type === 'erc1155') {
       recipientsData = parseDataERC1155(type, recipientsValue)
       if (!recipientsData) {
@@ -158,12 +163,14 @@ const CampaignTree: FC<ReduxType> = ({
       merkleData = buildMerkleTreeERC721(recipientsData)
     }
 
-    if (type === 'erc20') {
-      recipientsData = parseDataERC20(type, recipientsValue)
+    if (type === 'erc20' && decimals) {
+      recipientsData = parseDataERC20(type, recipientsValue, decimals)
       if (!recipientsData) {
         return false
       }
+      console.log({ recipientsData })
       merkleData = buildMerkleTreeERC20(recipientsData)
+      
     }
 
     if (recipientsData && merkleData) {
@@ -192,9 +199,9 @@ const CampaignTree: FC<ReduxType> = ({
         <WidgetButton
           title='Parse data'
           disabled={!recipientsValue}
-          onClick={() => {
-            if (!type) return
-            const validTree = createTree(type, recipientsValue)
+          onClick={async () => {
+            if (!type || !tokenAddress) return
+            const validTree = await createTree(type, recipientsValue, tokenAddress)
             if (!validTree) {
               return alert('Error in tree format')
             }

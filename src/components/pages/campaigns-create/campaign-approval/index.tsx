@@ -10,6 +10,7 @@ import {
   Widget,
   DataBlock
 } from 'components/common'
+import { countTotalTokens } from 'helpers'
 import { useHistory } from 'react-router-dom'
 import { TRetroDropType, TRecipientsData } from 'types'
 
@@ -33,13 +34,14 @@ type TProps = {
 
 const mapStateToProps = ({
   user: { address, provider, chainId },
-  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree, dropAddress, type },
+  newRetroDrop: { loading, step, tokenAddress, ipfs, merkleTree, dropAddress, type, decimals },
   contract: { loading: contractLoading },
 }: RootState) => ({
   loading,
   address,
   provider,
   ipfs,
+  decimals,
   step,
   tokenAddress,
   merkleTree,
@@ -63,6 +65,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
       dropLogoURL: string,
       recipientsData: TRecipientsData,
       type: TRetroDropType,
+      decimals: number | null,
       callback: () => void
     ) => approveERC1155(
       dispatch,
@@ -78,6 +81,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
       dropLogoURL,
       recipientsData,
       type,
+      decimals,
       callback
     ),
     approveERC721: (
@@ -93,6 +97,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
       dropLogoURL: string,
       recipientsData: TRecipientsData,
       type: TRetroDropType,
+      decimals: number | null,
       callback: () => void
     ) => approveERC721(
       dispatch,
@@ -108,6 +113,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
       dropLogoURL,
       recipientsData,
       type,
+      decimals,
       callback
     ),
     approveERC20: (
@@ -123,6 +129,7 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
       dropLogoURL: string,
       recipientsData: TRecipientsData,
       type: TRetroDropType,
+      decimals: number | null,
       callback: () => void
     ) => approveERC20(
       dispatch,
@@ -138,20 +145,12 @@ const mapDispatcherToProps = (dispatch: Dispatch<ContractActions> & Dispatch<New
       dropLogoURL,
       recipientsData,
       type,
+      decimals,
       callback
     ),
   }
 }
 type ReduxType = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatcherToProps> & TProps
-type TCountNFTs = (recipientsData: TRecipientsData, type: TRetroDropType | null) => number
-
-const countNFTs: TCountNFTs = (recipientsData, type) => {
-  if (!recipientsData) { return 0 }
-  if (type === 'erc1155' || type === 'erc20') {
-    return Object.values(recipientsData).reduce((sum, item) => sum + Number(item.amount), 0)
-  }
-  return Object.values(recipientsData).length
-}
 
 const CampaignApproval: FC<ReduxType> = ({
   dropTitle,
@@ -169,7 +168,8 @@ const CampaignApproval: FC<ReduxType> = ({
   dropDescription,
   approveERC1155,
   approveERC721,
-  approveERC20
+  approveERC20,
+  decimals
 }) => {
   const history = useHistory()
   return <Widget>
@@ -198,7 +198,7 @@ const CampaignApproval: FC<ReduxType> = ({
     <WidgetDataSplit>
       <WidgetDataBlock
         title='Total tokens dropped'
-        text={recipients ? countNFTs(recipients, type) : 0}
+        text={recipients ? countTotalTokens(recipients, type, decimals) : 0}
       />
       <WidgetDataBlock
         title='Recipients'
@@ -235,6 +235,7 @@ const CampaignApproval: FC<ReduxType> = ({
             dropLogoURL,
             recipients,
             type,
+            decimals,
             () => {
               history.push('/')
             }
