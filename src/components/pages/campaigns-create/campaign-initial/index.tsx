@@ -13,6 +13,7 @@ import * as newRetroDropActions from 'data/store/reducers/new-retro-drop/actions
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux'
 import { RootState } from 'data/store';
+import * as newRetroDropAsyncActions from 'data/store/reducers/new-retro-drop/async-actions'
 
 type TProps = {
   dropLogoURL: string,
@@ -21,15 +22,17 @@ type TProps = {
 }
 
 const mapStateToProps = ({
-  newRetroDrop: { type }
+  newRetroDrop: { type },
+  user: { provider }
 }: RootState) => ({
-  type
+  type,
+  provider
 })
 
 const mapDispatcherToProps = (dispatch: Dispatch<NewRetroDropActions>) => {
   return {
     setStep: (step: TRetroDropStep) => dispatch(newRetroDropActions.setStep(step)),
-    setTokenAddress: (tokenAddress: string) => dispatch(newRetroDropActions.setTokenAddress(tokenAddress)),
+    setTokenContractData: (tokenAddress: string, provider: any, type: TRetroDropType) => newRetroDropAsyncActions.setTokenContractData(dispatch, tokenAddress, provider, type),
   }
 }
 type ReduxType = ReturnType<typeof mapDispatcherToProps> & TProps & ReturnType<typeof mapStateToProps>
@@ -52,9 +55,10 @@ const createDefaultTokenAddress: TCreateDefaultTokenAddress = (type) => {
 
 const CampaignInfo: FC<ReduxType> = ({
   cancel,
-  setTokenAddress,
+  setTokenContractData,
   setStep,
-  type
+  type,
+  provider
 }) => {
   const [ currentTokenAddress, setCurrentTokenAddress ] = useState(createDefaultTokenAddress(type))
   return <Widget>
@@ -73,8 +77,8 @@ const CampaignInfo: FC<ReduxType> = ({
         title='Continue'
         disabled={currentTokenAddress.length !== 42}
         onClick={() => {
-          setTokenAddress(currentTokenAddress)
-          setStep('create_tree')
+          if (!type) { return }
+          setTokenContractData(currentTokenAddress, provider, type)
         }}
       />
     </WidgetControls>

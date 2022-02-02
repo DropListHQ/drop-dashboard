@@ -11,7 +11,8 @@ const initialState: NewRetroDropState = {
   dropAddress: null,
   loading: false,
   ipfs: null,
-  type: null
+  type: null,
+  decimals: null
 }
 
 export function newRetroDropReducer(
@@ -30,7 +31,7 @@ export function newRetroDropReducer(
         case Constants.DROP_SET_DESCRIPTION:
           return {...state, description: action.payload.description }
         case Constants.DROP_SET_LOGO_URL:
-              return {...state, logoURL: action.payload.logoURL }
+          return {...state, logoURL: action.payload.logoURL }
         case Constants.DROP_SET_LOADING:
           return {...state, loading: action.payload.loading }
         case Constants.DROP_SET_IPFS:
@@ -39,7 +40,11 @@ export function newRetroDropReducer(
           return {...state, dropAddress: action.payload.dropAddress }
         case Constants.DROP_SET_TYPE:
           return {...state, type: action.payload.type }
-          default:
-            return state;
+        case Constants.DROP_SET_DECIMALS:
+          return {...state, decimals: action.payload.decimals }
+        case Constants.DROP_CLEAR_NEW_RETRODROP:
+          return initialState
+        default:
+          return state;
     }
 }

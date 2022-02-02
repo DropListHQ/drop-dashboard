@@ -9,6 +9,7 @@ import { copyToClipboard } from 'helpers'
 import { useHistory } from 'react-router-dom'
 import { defineNetworkName, capitalize } from 'helpers'
 import { TRecipientsData, TRetroDropType } from 'types'
+import { countTotalTokens } from 'helpers'
 
 const { REACT_APP_CLAIM_URL } = process.env
 
@@ -31,16 +32,18 @@ interface IProps extends RouteComponentProps<MatchParams> {
 const mapStateToProps = ({
   drops: { retroDrops },
   user: { address },
+  newRetroDrop: { decimals },
   communities: { communities }
 }: RootState) => ({
   retroDrops,
   address,
+  decimals,
   communities
 })
 
 type ReduxType = ReturnType<typeof mapStateToProps>
 
-const defineTokenTexts = (recipients: TRecipientsData, type: TRetroDropType) => {
+const defineTokenTexts = (recipients: TRecipientsData, type: TRetroDropType, decimals: number | null) => {
   if (type === 'erc1155') {
     const tokens = recipients && Object.values(recipients).reduce<TReduceTokens>((sum, item) => {
       sum[item.tokenId] = (sum[item.tokenId] || 0) + Number(item.amount)
@@ -61,9 +64,7 @@ const defineTokenTexts = (recipients: TRecipientsData, type: TRetroDropType) => 
   }
 
   if (type === 'erc20') {
-    const tokensAmount = recipients && Object.values(recipients).reduce<TMapTokensAmount>((sum, item) => {
-      return sum + Number(item.amount)
-    }, 0)
+    const tokensAmount = countTotalTokens(recipients, 'erc20', decimals)
     return <WidgetDataSplit>
       <DataBlock title='Total amount' text={tokensAmount} />
     </WidgetDataSplit>
@@ -73,7 +74,7 @@ const defineTokenTexts = (recipients: TRecipientsData, type: TRetroDropType) => 
 }
 
 const CampaignDetails: FC<ReduxType & IProps & RouteComponentProps> = (props) => {
-  const { retroDrops, match: { params } } = props
+  const { retroDrops, match: { params }, decimals } = props
   const history = useHistory()
 
   const currentCampaign = retroDrops.find(item => item.ipfsHash === params.id)
@@ -106,7 +107,7 @@ const CampaignDetails: FC<ReduxType & IProps & RouteComponentProps> = (props) =>
           <DataBlock title='Type of token' text={type} />
         </WidgetDataSplit>
         <DataBlock title='Token address' text={tokenAddress} />
-        {defineTokenTexts(recipients, type)}
+        {defineTokenTexts(recipients, type, decimals)}
       </WidgetContainer>
 
       <LinkContainer>

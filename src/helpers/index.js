@@ -6,12 +6,13 @@ import {
   parseDataERC1155,
   parseDataERC721
 } from './parse-recipients-data'
-import { parseBalanceMapERC1155, parseBalanceMapERC721, parseBalanceMapERC20 } from './merkle'
 import defineJSONRpcUrl from './define-json-rpc-url'
 import copyToClipboard from './copy-to-clipboard'
 import getCSV from './get-csv'
 import checkRecipientsDataFormat from './check-recipients-data-format'
 import hexlifyIpfsHash from './hexlify-ipfs-hash'
+import getValidImage from './get-valid-image'
+import countTotalTokens from './count-total-tokens'
 
 export {
   shortenString,
@@ -20,12 +21,11 @@ export {
   parseDataERC20,
   parseDataERC1155,
   parseDataERC721,
-  parseBalanceMapERC1155,
   defineJSONRpcUrl,
   getCSV,
   copyToClipboard,
   checkRecipientsDataFormat,
-  parseBalanceMapERC721,
-  parseBalanceMapERC20,
-  hexlifyIpfsHash
+  hexlifyIpfsHash,
+  getValidImage,
+  countTotalTokens
 }

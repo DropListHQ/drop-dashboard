@@ -12,7 +12,8 @@ export interface NewRetroDropState {
   merkleTree: any,
   loading: boolean,
   ipfs: string | null,
-  type: null | TRetroDropType
+  type: null | TRetroDropType,
+  decimals: null | number
 }
 
 export type NewRetroDropActions = ActionType<typeof actions>;

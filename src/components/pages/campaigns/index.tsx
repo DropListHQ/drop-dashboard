@@ -11,7 +11,6 @@ import * as communitiesAsyncActions from 'data/store/reducers/communities/async-
 import { CommunitiesActions } from 'data/store/reducers/communities/types'
 import { Dispatch } from 'redux';
 import communities from 'configs/communities'
-
 type TProps = {
   connectWallet: () => void
 }

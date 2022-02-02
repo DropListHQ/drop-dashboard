@@ -7,6 +7,7 @@ import { DropsActions } from 'data/store/reducers/drops/types';
 import { ethers } from 'ethers';
 import { TRecipientsData, TRetroDropType } from 'types'
 import { ERC1155Contract } from 'abi'
+import * as newRetroDropDrops from 'data/store/reducers/new-retro-drop/actions';
 
 export default async function approveERC1155(
 	dispatch: Dispatch<ContractActions> & Dispatch<NewRetroDropActions> & Dispatch<DropsActions>,
@@ -22,6 +23,7 @@ export default async function approveERC1155(
 	logoURL: string,
 	recipients: TRecipientsData,
 	type: TRetroDropType,
+	decimals: number | null,
 	callback: () => void
 ) {
   dispatch(actionsContract.setLoading(true))
@@ -52,8 +54,10 @@ export default async function approveERC1155(
 			status: 'active',
 			tokenAddress,
 			recipients,
-			type
+			type,
+			decimals
 		}))
+		dispatch(newRetroDropDrops.clearNewRetroDrop())
 		if (callback) { callback() }
 	}
 	
